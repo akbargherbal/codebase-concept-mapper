@@ -1,0 +1,13 @@
+# --- Application Dependencies ---
+# Core libraries for machine learning and data processing.
+sentence-transformers~=5.1
+nomic~=3.9
+torch~=2.9
+numpy~=2.2
+
+# --- Development Dependencies ---
+# Tools for testing and code formatting.
+# Install with: pip install -r requirements.txt
+pytest~=9.0
+black~=25.11
+einops

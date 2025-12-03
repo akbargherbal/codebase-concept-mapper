@@ -26,3 +26,6 @@ __pycache__/
 .streamlit/
 
 *Zone.Identifier*
+
+temp_repos
+test_code
