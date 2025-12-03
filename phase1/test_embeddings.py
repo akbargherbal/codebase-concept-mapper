@@ -1,6 +1,6 @@
 """
-Phase 1: Embedding Model Tester
-Tests multiple embedding models on NL->Code mapping task
+Phase 1: Embedding Model Tester (Colab Optimized)
+Tests multiple embedding models on NL->Code mapping task with GPU acceleration
 """
 
 import json
@@ -8,16 +8,34 @@ import time
 from pathlib import Path
 from typing import Dict, List, Tuple
 import numpy as np
+import torch
 from concept_validators import ALL_VALIDATORS, validate_file_for_concept
 
 
-class EmbeddingModelTester:
-    """Test embedding models for code semantic search"""
+class ColabEmbeddingTester:
+    """Test embedding models for code semantic search with Colab optimizations"""
 
     def __init__(self, test_data_dir: Path = Path("test_code")):
         self.test_data_dir = test_data_dir
         self.test_files = {}
         self.results = {}
+        self.device = self._setup_device()
+        
+    def _setup_device(self):
+        """Detect and setup GPU if available"""
+        if torch.cuda.is_available():
+            device = "cuda"
+            gpu_name = torch.cuda.get_device_name(0)
+            gpu_memory = torch.cuda.get_device_properties(0).total_memory / 1e9
+            print(f"✓ GPU detected: {gpu_name} ({gpu_memory:.1f} GB)")
+            
+            # Clear cache
+            torch.cuda.empty_cache()
+        else:
+            device = "cpu"
+            print("⚠️  No GPU detected. Using CPU (will be slower)")
+        
+        return device
 
     def load_test_files(self):
         """Load all test files into memory"""
@@ -62,7 +80,7 @@ class EmbeddingModelTester:
 
     def test_model(self, model_name: str, model) -> Dict:
         """
-        Test a single embedding model on all concepts
+        Test a single embedding model on all concepts with Colab optimizations
 
         Args:
             model_name: Name of the model (for logging)
@@ -73,6 +91,7 @@ class EmbeddingModelTester:
         """
         print(f"\n{'='*60}")
         print(f"Testing Model: {model_name}")
+        print(f"Device: {self.device}")
         print("=" * 60)
 
         start_time = time.time()
@@ -84,12 +103,26 @@ class EmbeddingModelTester:
         content_list = [self.test_files[f]["content"] for f in file_list]
 
         try:
+            # Larger batch size for GPU
+            batch_size = 32 if self.device == "cuda" else 8
+            
             embeddings = model.encode(
-                content_list, show_progress_bar=True, batch_size=8
+                content_list, 
+                show_progress_bar=True, 
+                batch_size=batch_size,
+                device=self.device,
+                convert_to_numpy=True  # Ensure numpy output
             )
+            
             for filepath, embedding in zip(file_list, embeddings):
                 file_embeddings[filepath] = embedding
+            
             print(f"  ✓ Embedded {len(file_embeddings)} files")
+            
+            # Free GPU memory
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+                
         except Exception as e:
             print(f"  ✗ Error embedding files: {e}")
             return {"error": str(e)}
@@ -100,9 +133,9 @@ class EmbeddingModelTester:
 
         # Check if model requires special query formatting
         requires_coderank_prefix = "CodeRankEmbed" in model_name
-        requires_bge_prefix = (
-            "bge-" in model_name and "large" not in model_name
-        )  # bge-large doesn't need it
+        requires_bge_prefix = "bge-" in model_name and "large" not in model_name
+        requires_qwen_prefix = "Qwen" in model_name
+        requires_nomic_prefix = "nomic-embed-code" in model_name
 
         for concept_name in ALL_VALIDATORS.keys():
             # Embed query (add prefix for specific models)
@@ -111,10 +144,18 @@ class EmbeddingModelTester:
                     query_text = f"Represent this query for searching relevant code: {concept_name}"
                 elif requires_bge_prefix:
                     query_text = f"Represent this sentence for searching relevant passages: {concept_name}"
+                elif requires_qwen_prefix:
+                    query_text = f"search_query: {concept_name}"
+                elif requires_nomic_prefix:
+                    query_text = f"search_query: {concept_name}"
                 else:
                     query_text = concept_name
 
-                query_embedding = model.encode(query_text)
+                query_embedding = model.encode(
+                    query_text, 
+                    device=self.device,
+                    convert_to_numpy=True
+                )
             except Exception as e:
                 print(f"  ✗ Error embedding query '{concept_name}': {e}")
                 continue
@@ -177,8 +218,16 @@ class EmbeddingModelTester:
         pass_count = sum(1 for r in concept_results if r["precision_at_5"] >= 0.6)
         pass_rate = pass_count / total_concepts
 
+        # GPU memory stats
+        gpu_memory_used = None
+        if self.device == "cuda":
+            gpu_memory_used = torch.cuda.max_memory_allocated() / 1e9
+            torch.cuda.empty_cache()
+
         results = {
             "model": model_name,
+            "device": self.device,
+            "gpu_memory_gb": gpu_memory_used,
             "overall_precision_at_5": overall_p5,
             "overall_precision_at_1": overall_p1,
             "overall_mrr": overall_mrr,
@@ -198,6 +247,8 @@ class EmbeddingModelTester:
         print(f"Mean Reciprocal Rank: {overall_mrr:.3f}")
         print(f"Pass Rate (P@5≥60%): {pass_rate:.1%} ({pass_count}/{total_concepts})")
         print(f"Inference Time:       {inference_time:.1f}s")
+        if gpu_memory_used:
+            print(f"Peak GPU Memory:      {gpu_memory_used:.2f} GB")
         print("=" * 60)
 
         return results
@@ -222,8 +273,8 @@ class EmbeddingModelTester:
 
         # Create markdown table
         table = "\n## Model Comparison\n\n"
-        table += "| Model | P@5 | P@1 | MRR | Pass Rate | Time (s) | Decision |\n"
-        table += "|-------|-----|-----|-----|-----------|----------|----------|\n"
+        table += "| Model | P@5 | P@1 | MRR | Pass Rate | Time (s) | Device | Decision |\n"
+        table += "|-------|-----|-----|-----|-----------|----------|--------|----------|\n"
 
         for result in valid_results:
             p5 = result["overall_precision_at_5"]
@@ -231,6 +282,7 @@ class EmbeddingModelTester:
             mrr = result["overall_mrr"]
             pass_rate = result["pass_rate"]
             time_s = result["inference_time_seconds"]
+            device = result.get("device", "unknown")
 
             # Decision logic
             if p5 >= 0.70:
@@ -240,7 +292,7 @@ class EmbeddingModelTester:
             else:
                 decision = "❌ NO-GO"
 
-            table += f"| {result['model']} | {p5:.1%} | {p1:.1%} | {mrr:.3f} | {pass_rate:.1%} | {time_s:.1f} | {decision} |\n"
+            table += f"| {result['model']} | {p5:.1%} | {p1:.1%} | {mrr:.3f} | {pass_rate:.1%} | {time_s:.1f} | {device} | {decision} |\n"
 
         # Add decision summary
         best = valid_results[0]
@@ -252,6 +304,7 @@ class EmbeddingModelTester:
             table += f"**✅ PROCEED TO PHASE 2** with `{best['model']}`\n\n"
             table += f"- Achieves {best_p5:.1%} P@5 (threshold: ≥70%)\n"
             table += f"- {best['concepts_passed']}/{best['total_concepts']} concepts pass (P@5≥60%)\n"
+            table += f"- Device: {best.get('device', 'unknown')}\n"
         elif best_p5 >= 0.50:
             table += f"**⚠️ CONDITIONAL PROCEED** - Try enhancement strategies\n\n"
             table += f"- Best model: `{best['model']}` at {best_p5:.1%} P@5\n"
@@ -275,13 +328,13 @@ class EmbeddingModelTester:
 
 def main():
     """
-    Main testing workflow
+    Main testing workflow optimized for Colab
     Usage: python test_embeddings.py
     """
     from sentence_transformers import SentenceTransformer
 
     # Initialize tester
-    tester = EmbeddingModelTester()
+    tester = ColabEmbeddingTester()
 
     # Load test files
     file_count = tester.load_test_files()
@@ -291,14 +344,16 @@ def main():
 
     print(f"\n✓ Ready to test on {file_count} files and {len(ALL_VALIDATORS)} concepts")
 
-    # Models to test (updated based on research)
+    # UPDATED MODELS (2025 code-optimized)
     models_to_test = [
-        "nomic-ai/nomic-embed-code",
-        "nomic-ai/CodeRankEmbed",
-        # "thenlper/gte-large",
-        # "nomic-ai/nomic-embed-code",
-        # "Qwen/Qwen3-Embedding-0.6B",
-        # "Qwen/Qwen3-Embedding-4B",
+        # Code-specialized (recommended for this task)
+        "nomic-ai/nomic-embed-code",  # Top performer for code
+        
+        # Qwen3 series (strong multi-language support, includes code)
+        "Qwen/Qwen3-Embedding-0.6B",  # Fastest, lightweight
+        
+        # BGE series (general but good baseline)
+        "BAAI/bge-small-en-v1.5",  # Fast CPU baseline
     ]
 
     all_results = []
@@ -309,11 +364,18 @@ def main():
         print("#" * 60)
 
         try:
-            # Load model (some models need trust_remote_code)
-            if "nomic-ai" in model_name:
-                model = SentenceTransformer(model_name, trust_remote_code=True)
+            # Load model with trust_remote_code for nomic/qwen
+            if "nomic" in model_name.lower() or "qwen" in model_name.lower():
+                model = SentenceTransformer(
+                    model_name, 
+                    trust_remote_code=True,
+                    device=tester.device
+                )
             else:
-                model = SentenceTransformer(model_name)
+                model = SentenceTransformer(
+                    model_name,
+                    device=tester.device
+                )
 
             results = tester.test_model(model_name, model)
             all_results.append(results)
@@ -321,9 +383,16 @@ def main():
             # Save individual results
             safe_name = model_name.replace("/", "_")
             tester.save_results(results, f"results_{safe_name}.json")
+            
+            # Clear memory
+            del model
+            if tester.device == "cuda":
+                torch.cuda.empty_cache()
 
         except Exception as e:
             print(f"❌ Failed to test {model_name}: {e}")
+            import traceback
+            traceback.print_exc()
             all_results.append({"model": model_name, "error": str(e)})
             continue
 

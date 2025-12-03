@@ -1,7 +1,6 @@
 """
-Phase 1: Concept Validators
-Content-based validation for 20 programming concepts
-NO hard-coded filenames - validates actual code implementation
+Phase 1: Improved Concept Validators
+Content-based validation for 20 programming concepts with stricter checks
 """
 import re
 from typing import Dict, List, Optional
@@ -14,11 +13,13 @@ class ConceptValidator:
                  must_contain_any: List[str],
                  must_not_contain: List[str],
                  min_occurrences: int = 1,
-                 regex_pattern: Optional[str] = None):
+                 regex_pattern: Optional[str] = None,
+                 context_check: Optional[callable] = None):
         self.must_contain_any = must_contain_any
         self.must_not_contain = must_not_contain
         self.min_occurrences = min_occurrences
         self.regex_pattern = regex_pattern
+        self.context_check = context_check
     
     def validate(self, content: str) -> bool:
         """Check if content implements the concept"""
@@ -34,15 +35,39 @@ class ConceptValidator:
             return False
         
         # Check must_not_contain (language/syntax detection)
-        if any(anti in content for anti in self.must_not_contain):
-            return False
+        for anti in self.must_not_contain:
+            if anti in content:
+                return False
         
         # Optional: regex pattern validation
         if self.regex_pattern:
             if not re.search(self.regex_pattern, content, re.MULTILINE | re.DOTALL):
                 return False
         
+        # Optional: custom context check
+        if self.context_check:
+            if not self.context_check(content):
+                return False
+        
         return True
+
+
+def check_closure_structure(content: str) -> bool:
+    """Check for actual closure pattern (nested function returning function)"""
+    # Look for function definitions that return other functions
+    patterns = [
+        r'function\s+\w+\([^)]*\)\s*{[^}]*return\s+function',
+        r'const\s+\w+\s*=\s*\([^)]*\)\s*=>\s*{[^}]*return\s+\(',
+        r'function\s+\w+\([^)]*\)\s*{[^}]*return\s*\(',
+    ]
+    return any(re.search(p, content, re.DOTALL) for p in patterns)
+
+
+def check_list_comprehension(content: str) -> bool:
+    """Check for actual list comprehension syntax"""
+    # Python list comprehension: [x for x in iterable]
+    pattern = r'\[[^\]]+\s+for\s+\w+\s+in\s+[^\]]+\]'
+    return bool(re.search(pattern, content))
 
 
 # ============================================================================
@@ -52,63 +77,67 @@ class ConceptValidator:
 PYTHON_VALIDATORS = {
     "context managers python": ConceptValidator(
         must_contain_any=["__enter__", "__exit__", "with ", "@contextmanager"],
-        must_not_contain=["function(", "const ", "=>", "function*"],
-        min_occurrences=1
+        must_not_contain=["function(", "const ", "=>", "function*", "async function"],
+        min_occurrences=2  # Need both __enter__ and __exit__, or with statement
     ),
     
     "async await python": ConceptValidator(
         must_contain_any=["async def", "await ", "asyncio"],
-        must_not_contain=["Promise", "async function", "function async"],
-        min_occurrences=2
+        must_not_contain=["Promise", "async function", "function async", ".then("],
+        min_occurrences=2  # Need both async def and await
     ),
     
     "decorators python": ConceptValidator(
-        must_contain_any=["@", "def decorator", "functools.wraps", "@property"],
-        must_not_contain=["@interface", "@component", "@Injectable"],
-        min_occurrences=2
+        must_contain_any=["@", "functools.wraps", "@property", "@staticmethod", "@classmethod"],
+        must_not_contain=["@interface", "@component", "@Injectable", "@Decorator("],
+        min_occurrences=1,
+        regex_pattern=r'@\w+\s*\n\s*def\s+\w+'  # @ followed by function def
     ),
     
     "list comprehensions python": ConceptValidator(
-        must_contain_any=["[", "for ", " in "],
-        must_not_contain=[".map(", ".filter(", "=>"],
-        min_occurrences=1,
-        regex_pattern=r"\[.+\s+for\s+.+\s+in\s+.+\]"
+        must_contain_any=["[", "for ", " in ", "]"],
+        must_not_contain=[".map(", ".filter(", "=>", "Array.from"],
+        min_occurrences=3,  # Need [, for, in
+        context_check=check_list_comprehension
     ),
     
     "exception handling python": ConceptValidator(
-        must_contain_any=["try:", "except ", "finally:", "raise "],
-        must_not_contain=["catch", "throw new", "} catch"],
-        min_occurrences=2
+        must_contain_any=["try:", "except ", "finally:", "raise ", "Exception"],
+        must_not_contain=["catch", "throw new", "} catch", "catch("],
+        min_occurrences=2  # Need try + except/finally/raise
     ),
     
     "generators python": ConceptValidator(
-        must_contain_any=["yield ", "def ", "next("],
-        must_not_contain=["function*", "yield*", "function yield"],
-        min_occurrences=1
+        must_contain_any=["yield ", "def ", "next(", "__next__"],
+        must_not_contain=["function*", "yield*", "function yield", "async function*"],
+        min_occurrences=2,  # Need def and yield
+        regex_pattern=r'def\s+\w+[^:]*:[^}]*yield\s+'
     ),
     
     "class inheritance python": ConceptValidator(
-        must_contain_any=["class ", "super(", "__init__"],
-        must_not_contain=["extends ", "class {", "constructor("],
-        min_occurrences=2
+        must_contain_any=["class ", "super(", "__init__", "self"],
+        must_not_contain=["extends ", "class {", "constructor(", "this."],
+        min_occurrences=2  # Need class and super/init
     ),
     
     "file handling python": ConceptValidator(
-        must_contain_any=["open(", "with open", ".read(", ".write(", "file"],
-        must_not_contain=["fs.readFile", "require('fs')", "fs.writeFile"],
+        must_contain_any=["open(", "with open", ".read(", ".write(", ".close("],
+        must_not_contain=["fs.readFile", "require('fs')", "fs.writeFile", "readFileSync"],
         min_occurrences=1
     ),
     
     "lambda functions python": ConceptValidator(
-        must_contain_any=["lambda ", "map(", "filter("],
-        must_not_contain=["=>", "function(", "const "],
-        min_occurrences=1
+        must_contain_any=["lambda ", "lambda:", "map(", "filter("],
+        must_not_contain=["=>", "function(", "const ", "var "],
+        min_occurrences=1,
+        regex_pattern=r'lambda\s+\w+\s*:'
     ),
     
     "dataclasses python": ConceptValidator(
-        must_contain_any=["@dataclass", "from dataclasses", "dataclass"],
-        must_not_contain=["interface ", "type ", "class {"],
-        min_occurrences=1
+        must_contain_any=["@dataclass", "from dataclasses", "dataclass("],
+        must_not_contain=["interface ", "type ", "class {", "@Entity"],
+        min_occurrences=1,
+        regex_pattern=r'@dataclass\s*\n\s*class\s+\w+'
     )
 }
 
@@ -118,64 +147,71 @@ PYTHON_VALIDATORS = {
 
 JAVASCRIPT_VALIDATORS = {
     "promises javascript": ConceptValidator(
-        must_contain_any=["new Promise(", ".then(", ".catch(", "Promise.all", "Promise."],
-        must_not_contain=["async def", "await asyncio", "asyncio."],
-        min_occurrences=2
+        must_contain_any=["new Promise(", ".then(", ".catch(", "Promise.all", "resolve(", "reject("],
+        must_not_contain=["async def", "await asyncio", "asyncio.", "import asyncio"],
+        min_occurrences=2  # Need Promise and then/catch/all
     ),
     
     "async await javascript": ConceptValidator(
         must_contain_any=["async function", "async (", "await ", "async "],
-        must_not_contain=["async def", "asyncio", "import asyncio"],
-        min_occurrences=2
+        must_not_contain=["async def", "asyncio", "import asyncio", "asyncio."],
+        min_occurrences=2,  # Need async and await
+        regex_pattern=r'async\s+(function|\(|[\w]+\s*=>)'
     ),
     
     "react hooks": ConceptValidator(
-        must_contain_any=["useState", "useEffect", "useContext", "useReducer", "useMemo", "useCallback"],
-        must_not_contain=["@hook", "def use", "class Component"],
-        min_occurrences=1
+        must_contain_any=["useState", "useEffect", "useContext", "useReducer", "useMemo", "useCallback", "useRef"],
+        must_not_contain=["@hook", "def use", "class Component", "import { Component }"],
+        min_occurrences=1,
+        regex_pattern=r'(const|let|var)\s*\[[^\]]+\]\s*=\s*useState|useEffect\s*\('
     ),
     
     "closures javascript": ConceptValidator(
-        must_contain_any=["function", "return function", "() =>", "return ("],
+        must_contain_any=["function", "return function", "=>", "return ("],
         must_not_contain=["def ", "lambda", "yield"],
         min_occurrences=2,
-        regex_pattern=r"(function.*\{.*return\s+function|const.*=.*\(.*\).*=>.*\(.*\).*=>)"
+        context_check=check_closure_structure
     ),
     
     "arrow functions javascript": ConceptValidator(
-        must_contain_any=["=>", "const ", "let "],
-        must_not_contain=["lambda", "def ", "yield"],
-        min_occurrences=2
+        must_contain_any=["=>"],
+        must_not_contain=["lambda", "def ", "yield", "=>:"],
+        min_occurrences=1,
+        regex_pattern=r'\([^)]*\)\s*=>'
     ),
     
     "destructuring javascript": ConceptValidator(
         must_contain_any=["const {", "let {", "const [", "let [", "..."],
         must_not_contain=["def ", "import ", "from dataclasses"],
-        min_occurrences=1
+        min_occurrences=1,
+        regex_pattern=r'(const|let|var)\s*(\{[^}]+\}|\[[^\]]+\])\s*='
     ),
     
     "event handling javascript": ConceptValidator(
-        must_contain_any=["addEventListener", "onClick", "onSubmit", ".on(", "onChange"],
-        must_not_contain=["def on_", "@event", "def handle"],
+        must_contain_any=["addEventListener", "onClick", "onSubmit", ".on(", "onChange", "onLoad"],
+        must_not_contain=["def on_", "@event", "def handle", "self.on_"],
         min_occurrences=1
     ),
     
     "callbacks javascript": ConceptValidator(
-        must_contain_any=["function(", "callback", "(err, ", "=>", "(error,"],
+        must_contain_any=["callback", "(err, ", "(error,", "function("],
         must_not_contain=["def callback", "lambda", "yield"],
-        min_occurrences=1
+        min_occurrences=1,
+        regex_pattern=r'function\s*\([^)]*callback[^)]*\)|callback\s*\('
     ),
     
     "array methods javascript": ConceptValidator(
-        must_contain_any=[".map(", ".filter(", ".reduce(", ".forEach(", ".find("],
-        must_not_contain=["[x for x in", "list(map", "[", "for ", "]"],
-        min_occurrences=2
+        must_contain_any=[".map(", ".filter(", ".reduce(", ".forEach(", ".find(", ".some("],
+        must_not_contain=["[x for x in", "list(map", "map(lambda"],
+        min_occurrences=1,
+        regex_pattern=r'\.(map|filter|reduce|forEach|find|some)\s*\('
     ),
     
     "classes javascript": ConceptValidator(
         must_contain_any=["class ", "constructor(", "extends ", "super("],
-        must_not_contain=["class :", "def __init__", "__init__(self"],
-        min_occurrences=1
+        must_not_contain=["class :", "def __init__", "__init__(self", "self."],
+        min_occurrences=2,  # Need class and constructor/extends
+        regex_pattern=r'class\s+\w+\s*(extends\s+\w+)?\s*\{'
     )
 }
 
@@ -237,6 +273,10 @@ import asyncio
 async def fetch_data():
     await asyncio.sleep(1)
     return "data"
+
+async def main():
+    result = await fetch_data()
+    print(result)
 """
     
     # JavaScript promise sample
@@ -244,45 +284,47 @@ async def fetch_data():
 function fetchData() {
     return new Promise((resolve, reject) => {
         setTimeout(() => resolve('data'), 1000);
+    }).then(data => {
+        console.log(data);
+    }).catch(error => {
+        console.error(error);
     });
 }
 """
     
-    # Test Python validator
-    is_python_async = validate_file_for_concept(
-        "test.py", 
-        python_async_code, 
-        "async await python"
-    )
-    print(f"Python async detected: {is_python_async} (expected: True)")
+    # Python list comprehension
+    python_list_comp = """
+numbers = [1, 2, 3, 4, 5]
+squares = [x**2 for x in numbers if x % 2 == 0]
+"""
     
-    # Should NOT match JavaScript validator
-    is_js_async = validate_file_for_concept(
-        "test.py",
-        python_async_code,
-        "async await javascript"
-    )
-    print(f"JS async detected in Python code: {is_js_async} (expected: False)")
+    tests = [
+        ("async await python", python_async_code, True),
+        ("async await javascript", python_async_code, False),
+        ("promises javascript", js_promise_code, True),
+        ("async await python", js_promise_code, False),
+        ("list comprehensions python", python_list_comp, True),
+    ]
     
-    # Test JavaScript validator
-    is_js_promise = validate_file_for_concept(
-        "test.js",
-        js_promise_code,
-        "promises javascript"
-    )
-    print(f"JS promise detected: {is_js_promise} (expected: True)")
+    print("Testing concept validators...")
+    all_passed = True
     
-    # Should NOT match Python validator
-    is_python_promise = validate_file_for_concept(
-        "test.js",
-        js_promise_code,
-        "async await python"
-    )
-    print(f"Python async detected in JS code: {is_python_promise} (expected: False)")
+    for concept, code, expected in tests:
+        result = validate_file_for_concept("test.py", code, concept)
+        status = "✓" if result == expected else "✗"
+        if result != expected:
+            all_passed = False
+        print(f"{status} {concept}: {result} (expected: {expected})")
+    
+    if all_passed:
+        print("\n✓ All validator tests passed!")
+    else:
+        print("\n✗ Some validator tests failed!")
+    
+    return all_passed
 
 
 if __name__ == "__main__":
-    print("Testing concept validators...")
     test_validator_on_sample()
     print(f"\nTotal concepts available: {len(ALL_VALIDATORS)}")
     print(f"Python concepts: {len(PYTHON_VALIDATORS)}")

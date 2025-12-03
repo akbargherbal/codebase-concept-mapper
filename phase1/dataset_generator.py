@@ -1,5 +1,5 @@
 """
-Phase 1: Test Dataset Generator
+Phase 1: Test Dataset Generator (Colab Optimized)
 Clones repos and samples random files for embedding tests
 """
 import os
@@ -8,6 +8,7 @@ import random
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Tuple
+from datetime import datetime
 
 # Configuration
 TEST_REPOS = {
@@ -33,8 +34,15 @@ METADATA_FILE = OUTPUT_DIR / "metadata.json"
 
 
 class DatasetGenerator:
-    def __init__(self):
+    def __init__(self, use_drive=False, drive_path="/content/drive/MyDrive/phase1_cache"):
+        """
+        Args:
+            use_drive: If True, save to Google Drive for persistence
+            drive_path: Path to save cached data on Drive
+        """
         self.output_dir = OUTPUT_DIR
+        self.use_drive = use_drive
+        self.drive_path = Path(drive_path) if use_drive else None
         self.metadata = {
             "generation_date": None,
             "repos": {},
@@ -42,6 +50,21 @@ class DatasetGenerator:
             "stats": {}
         }
         
+    def setup_drive(self):
+        """Mount Google Drive if requested"""
+        if self.use_drive:
+            try:
+                from google.colab import drive
+                drive.mount('/content/drive')
+                self.drive_path.mkdir(parents=True, exist_ok=True)
+                print(f"✓ Google Drive mounted at {self.drive_path}")
+                return True
+            except ImportError:
+                print("⚠️ Google Colab not detected. Skipping Drive mount.")
+                self.use_drive = False
+                return False
+        return False
+    
     def setup_directories(self):
         """Create output directories"""
         (self.output_dir / "python").mkdir(parents=True, exist_ok=True)
@@ -55,11 +78,28 @@ class DatasetGenerator:
             return True
         
         try:
-            cmd = ["git", "clone", "--depth", "1", 
-                   f"https://github.com/{repo_url}.git", str(target_dir)]
-            subprocess.run(cmd, check=True, capture_output=True)
+            # Use --filter for faster clones on Colab
+            cmd = [
+                "git", "clone", 
+                "--depth", "1",
+                "--filter=blob:none",  # Faster partial clone
+                "--no-checkout",  # Don't checkout yet
+                f"https://github.com/{repo_url}.git", 
+                str(target_dir)
+            ]
+            subprocess.run(cmd, check=True, capture_output=True, timeout=120)
+            
+            # Sparse checkout only the directory we need
+            subprocess.run(
+                ["git", "-C", str(target_dir), "checkout"],
+                check=True, capture_output=True, timeout=60
+            )
+            
             print(f"  ✓ Cloned {repo_url}")
             return True
+        except subprocess.TimeoutExpired:
+            print(f"  ✗ Timeout cloning {repo_url}")
+            return False
         except subprocess.CalledProcessError as e:
             print(f"  ✗ Failed to clone {repo_url}: {e}")
             return False
@@ -70,7 +110,8 @@ class DatasetGenerator:
         skip_patterns = [
             'test', '__test__', 'spec.', '.test.', '.spec.',
             'config', 'setup', 'build', 'dist', 'node_modules',
-            '__pycache__', '.pyc', 'migrations'
+            '__pycache__', '.pyc', 'migrations', 'vendor',
+            '.min.', 'bundle', 'webpack'  # Skip minified/bundled
         ]
         
         filepath_str = str(filepath).lower()
@@ -92,9 +133,23 @@ class DatasetGenerator:
                 if line_count < MIN_LINES or line_count > MAX_LINES:
                     return False
                 
-                # Check it's not just comments/empty
-                code_lines = [l for l in lines if l.strip() and not l.strip().startswith('#')]
-                if len(code_lines) < MIN_LINES * 0.5:
+                # Check it's not just comments/empty (stricter check)
+                content = ''.join(lines)
+                code_lines = [
+                    l for l in lines 
+                    if l.strip() 
+                    and not l.strip().startswith(('#', '//', '/*', '*', '"""', "'''"))
+                ]
+                
+                if len(code_lines) < MIN_LINES * 0.6:  # At least 60% real code
+                    return False
+                
+                # Must have some function/class definitions
+                has_def = any(
+                    keyword in content 
+                    for keyword in ['def ', 'class ', 'function ', 'const ', 'let ']
+                )
+                if not has_def:
                     return False
                 
                 return True
@@ -146,14 +201,22 @@ class DatasetGenerator:
             "lines": len(content.splitlines())
         }
     
+    def save_checkpoint(self):
+        """Save progress to Drive if enabled"""
+        if self.use_drive and self.drive_path:
+            checkpoint_path = self.drive_path / "checkpoint.json"
+            with open(checkpoint_path, 'w') as f:
+                json.dump(self.metadata, f, indent=2)
+            print(f"  💾 Checkpoint saved to {checkpoint_path}")
+    
     def generate_dataset(self):
         """Main dataset generation workflow"""
-        from datetime import datetime
-        
         print("\n" + "="*60)
-        print("PHASE 1: GENERATING TEST DATASET")
+        print("PHASE 1: GENERATING TEST DATASET (COLAB OPTIMIZED)")
         print("="*60)
         
+        # Setup
+        self.setup_drive()
         self.setup_directories()
         self.metadata["generation_date"] = datetime.now().isoformat()
         
@@ -199,6 +262,9 @@ class DatasetGenerator:
                     lang_files += 1
                 
                 self.metadata["repos"][repo_url] = repo_metadata
+                
+                # Save checkpoint after each repo
+                self.save_checkpoint()
             
             print(f"\n  ✓ {lang.upper()}: {lang_files} files collected")
             total_files += lang_files
@@ -215,6 +281,15 @@ class DatasetGenerator:
         with open(METADATA_FILE, 'w') as f:
             json.dump(self.metadata, f, indent=2)
         
+        # Copy to Drive if enabled
+        if self.use_drive:
+            import shutil
+            drive_output = self.drive_path / "test_code"
+            if drive_output.exists():
+                shutil.rmtree(drive_output)
+            shutil.copytree(self.output_dir, drive_output)
+            print(f"\n💾 Dataset backed up to {drive_output}")
+        
         print("\n" + "="*60)
         print("DATASET GENERATION COMPLETE")
         print("="*60)
@@ -226,8 +301,19 @@ class DatasetGenerator:
 
 
 def main():
+    """
+    Usage:
+    # Local or Colab without Drive persistence
+    python dataset_generator.py
+    
+    # Colab with Drive persistence (recommended)
+    python dataset_generator.py --use-drive
+    """
+    import sys
+    use_drive = "--use-drive" in sys.argv or "-d" in sys.argv
+    
     random.seed(42)  # Reproducibility
-    generator = DatasetGenerator()
+    generator = DatasetGenerator(use_drive=use_drive)
     generator.generate_dataset()
 
 
