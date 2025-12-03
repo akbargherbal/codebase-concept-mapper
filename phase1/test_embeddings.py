@@ -293,13 +293,12 @@ def main():
 
     # Models to test (updated based on research)
     models_to_test = [
-        "BAAI/bge-base-en-v1.5",  # Stronger generalist
-        "nomic-ai/CodeRankEmbed",  # Code-specific model
-        "thenlper/gte-large",  # Top-tier alternative
-        "jinaai/jina-code-embeddings-0.5b",
-        "Alibaba-NLP/gte-modernbert-base",
-        "Qwen/Qwen3-Embedding-0.6B",
-        "Qwen/Qwen3-Embedding-4B",
+        "nomic-ai/nomic-embed-code",
+        "nomic-ai/CodeRankEmbed",
+        # "thenlper/gte-large",
+        # "nomic-ai/nomic-embed-code",
+        # "Qwen/Qwen3-Embedding-0.6B",
+        # "Qwen/Qwen3-Embedding-4B",
     ]
 
     all_results = []
