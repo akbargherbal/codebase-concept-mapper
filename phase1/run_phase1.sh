@@ -10,11 +10,12 @@ echo "║   PHASE 1: EMBEDDING VIABILITY TEST - FULL PIPELINE        ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 echo ""
 
-# Ensure we're in virtual environment
+# Check virtual environment (warning only, doesn't exit)
 if [ -z "$VIRTUAL_ENV" ]; then
     echo "⚠️  Virtual environment not activated"
-    echo "   Run: source venv/bin/activate"
-    exit 1
+    echo "   Recommendation: source venv/bin/activate"
+    echo "   Continuing anyway..."
+    echo ""
 fi
 
 # Step 1: Generate test dataset
