@@ -1,8 +1,9 @@
 """
-Phase 1: Embedding Model Tester (FIXED VERSION)
-- Added code-specific models (CodeRankEmbed, nomic-embed-text-v1.5)
-- Fixed prefix system to apply to BOTH queries AND documents
-- Proper model-specific prefix mappings
+Phase 1: Embedding Model Tester (MEMORY OPTIMIZED)
+- Fixed OOM issues for CodeRankEmbed
+- Added text truncation to 512 tokens max
+- Reduced batch sizes for large models
+- Added aggressive memory cleanup
 """
 
 import json
@@ -23,58 +24,73 @@ from concept_validators import ALL_VALIDATORS, validate_file_for_concept
 MODEL_PREFIXES = {
     "nomic-ai/nomic-embed-text-v1.5": {
         "query": "search_query: ",
-        "document": "search_document: ",
+        "document": "search_document: "
     },
     "nomic-ai/nomic-embed-code": {
         "query": "search_query: ",
-        "document": "search_document: ",
+        "document": "search_document: "
     },
     "nomic-ai/CodeRankEmbed": {
         "query": "Represent this query for searching relevant code: ",
-        "document": "",  # No prefix for documents
+        "document": ""  # No prefix for documents
     },
     "intfloat/multilingual-e5-large-instruct": {
         "query": "query: ",
-        "document": "passage: ",
+        "document": "passage: "
     },
     "BAAI/bge-small-en-v1.5": {
         "query": "Represent this sentence for searching relevant passages: ",
-        "document": "",
+        "document": ""
     },
-    "Qwen/Qwen3-Embedding-0.6B": {"query": "query: ", "document": ""},
+    "Qwen/Qwen3-Embedding-0.6B": {
+        "query": "query: ",
+        "document": ""
+    },
     # Models that don't need prefixes
-    "Alibaba-NLP/gte-multilingual-base": {"query": "", "document": ""},
-    "google/embeddinggemma-300m": {"query": "", "document": ""},
+    "Alibaba-NLP/gte-multilingual-base": {
+        "query": "",
+        "document": ""
+    },
+    "google/embeddinggemma-300m": {
+        "query": "",
+        "document": ""
+    }
 }
 
 
 def get_model_prefix(model_name: str, prefix_type: str) -> str:
-    """
-    Get the appropriate prefix for a model
-
-    Args:
-        model_name: Full model name (e.g., "nomic-ai/CodeRankEmbed")
-        prefix_type: Either "query" or "document"
-
-    Returns:
-        Prefix string (empty string if no prefix needed)
-    """
+    """Get the appropriate prefix for a model"""
     if model_name in MODEL_PREFIXES:
         return MODEL_PREFIXES[model_name].get(prefix_type, "")
-
-    # No prefix for unknown models
     return ""
 
 
-class ColabEmbeddingTester:
-    """Test embedding models for code semantic search with Colab optimizations"""
+def truncate_text(text: str, max_tokens: int = 512) -> str:
+    """
+    Truncate text to approximately max_tokens
+    Use simple word-based truncation (1 token ≈ 0.75 words)
+    """
+    words = text.split()
+    max_words = int(max_tokens * 0.75)
+    
+    if len(words) <= max_words:
+        return text
+    
+    # Truncate and add marker
+    truncated = ' '.join(words[:max_words])
+    return truncated + "..."
 
-    def __init__(self, test_data_dir: Path = Path("test_code")):
+
+class ColabEmbeddingTester:
+    """Test embedding models for code semantic search (MEMORY OPTIMIZED)"""
+
+    def __init__(self, test_data_dir: Path = Path("test_code"), max_tokens: int = 512):
         self.test_data_dir = test_data_dir
         self.test_files = {}
         self.results = {}
         self.device = self._setup_device()
-        self.current_model_name = None  # Track current model for prefix lookup
+        self.current_model_name = None
+        self.max_tokens = max_tokens  # Prevent OOM
 
     def _setup_device(self):
         """Detect and setup GPU if available"""
@@ -84,8 +100,9 @@ class ColabEmbeddingTester:
             gpu_memory = torch.cuda.get_device_properties(0).total_memory / 1e9
             print(f"✅ GPU detected: {gpu_name} ({gpu_memory:.1f} GB)")
 
-            # Clear cache
+            # Aggressive cache clearing
             torch.cuda.empty_cache()
+            gc.collect()
         else:
             device = "cpu"
             print("⚠️  No GPU detected. Using CPU (will be slower)")
@@ -93,7 +110,7 @@ class ColabEmbeddingTester:
         return device
 
     def load_test_files(self):
-        """Load all test files into memory"""
+        """Load all test files into memory (with truncation)"""
         print("\n📂 Loading test files...")
 
         for lang_dir in ["python", "javascript"]:
@@ -110,16 +127,20 @@ class ColabEmbeddingTester:
                         ) as f:
                             content = f.read()
 
+                        # Truncate to prevent OOM
+                        content_truncated = truncate_text(content, self.max_tokens)
+
                         relative_path = str(filepath.relative_to(self.test_data_dir))
                         self.test_files[relative_path] = {
-                            "content": content,
+                            "content": content_truncated,  # Use truncated
+                            "content_full": content,       # Keep full for validation
                             "language": lang_dir,
                             "path": str(filepath),
                         }
                     except Exception as e:
                         print(f"  Error loading {filepath}: {e}")
 
-        print(f"  ✅ Loaded {len(self.test_files)} files")
+        print(f"  ✅ Loaded {len(self.test_files)} files (truncated to {self.max_tokens} tokens)")
         return len(self.test_files)
 
     def cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
@@ -133,30 +154,23 @@ class ColabEmbeddingTester:
 
         return dot_product / (norm1 * norm2)
 
-    def embed_documents(self, model, texts: List[str]) -> np.ndarray:
+    def embed_documents(self, model, texts: List[str], batch_size: int = 4) -> np.ndarray:
         """
-        Embed documents with proper prefix (FIXED)
-
-        Args:
-            model: SentenceTransformer model
-            texts: List of document texts
-
-        Returns:
-            Array of embeddings
+        Embed documents with proper prefix (MEMORY OPTIMIZED)
         """
         doc_prefix = get_model_prefix(self.current_model_name, "document")
-
+        
         if doc_prefix:
-            # Add prefix to all documents
             prefixed_texts = [f"{doc_prefix}{text}" for text in texts]
-            print(
-                f"  → Using document prefix: '{doc_prefix}' (applied to {len(texts)} docs)"
-            )
+            print(f"  → Using document prefix: '{doc_prefix}' (applied to {len(texts)} docs)")
         else:
             prefixed_texts = texts
-
-        batch_size = 8 if self.device == "cuda" else 4
-
+        
+        # FIXED: Use smaller batch size for CodeRankEmbed
+        if "CodeRankEmbed" in self.current_model_name:
+            batch_size = 2  # Very small batch
+            print(f"  → Using batch_size={batch_size} for CodeRankEmbed (memory optimization)")
+        
         embeddings = model.encode(
             prefixed_texts,
             show_progress_bar=True,
@@ -164,46 +178,35 @@ class ColabEmbeddingTester:
             device=self.device,
             convert_to_numpy=True,
         )
-
+        
+        # Clear cache after embedding
+        if self.device == "cuda":
+            torch.cuda.empty_cache()
+            gc.collect()
+        
         return embeddings
 
     def embed_query(self, model, query: str) -> np.ndarray:
-        """
-        Embed query with proper prefix (FIXED)
-
-        Args:
-            model: SentenceTransformer model
-            query: Query text
-
-        Returns:
-            Query embedding
-        """
+        """Embed query with proper prefix"""
         query_prefix = get_model_prefix(self.current_model_name, "query")
-
+        
         if query_prefix:
             prefixed_query = f"{query_prefix}{query}"
         else:
             prefixed_query = query
-
+        
         embedding = model.encode(
-            prefixed_query, device=self.device, convert_to_numpy=True
+            prefixed_query,
+            device=self.device,
+            convert_to_numpy=True
         )
-
+        
         return embedding
 
     def test_model(self, model_name: str, model) -> Dict:
-        """
-        Test a single embedding model on all concepts with Colab optimizations
-
-        Args:
-            model_name: Name of the model (for logging)
-            model: SentenceTransformer or compatible model object
-
-        Returns:
-            Dict with results including P@1, P@5, per-concept scores
-        """
-        self.current_model_name = model_name  # Store for prefix lookup
-
+        """Test a single embedding model on all concepts"""
+        self.current_model_name = model_name
+        
         print(f"\n{'='*60}")
         print(f"Testing Model: {model_name}")
         print(f"Device: {self.device}")
@@ -218,31 +221,30 @@ class ColabEmbeddingTester:
         content_list = [self.test_files[f]["content"] for f in file_list]
 
         try:
-            # Use proper document embedding with prefixes
-            embeddings = self.embed_documents(model, content_list)
+            # Determine batch size
+            batch_size = 2 if "CodeRankEmbed" in model_name else 8
+            
+            embeddings = self.embed_documents(model, content_list, batch_size=batch_size)
 
             for filepath, embedding in zip(file_list, embeddings):
                 file_embeddings[filepath] = embedding
 
             print(f"  ✅ Embedded {len(file_embeddings)} files")
 
-            # Free GPU memory
-            if self.device == "cuda":
-                torch.cuda.empty_cache()
-
         except Exception as e:
             print(f"  ❌ Error embedding files: {e}")
+            import traceback
+            traceback.print_exc()
             return {"error": str(e)}
 
-        # Step 2: Test each concept with PROPER QUERY PREFIXES
+        # Step 2: Test each concept
         print("\n2️⃣ Testing concepts...")
         concept_results = []
 
         for concept_name in ALL_VALIDATORS.keys():
             try:
-                # Use proper query embedding with prefixes
                 query_embedding = self.embed_query(model, concept_name)
-
+                
             except Exception as e:
                 print(f"  ❌ Error embedding query '{concept_name}': {e}")
                 continue
@@ -256,11 +258,11 @@ class ColabEmbeddingTester:
             # Get top 5 results
             top_5 = sorted(similarities.items(), key=lambda x: x[1], reverse=True)[:5]
 
-            # Validate each result
+            # Validate each result (use FULL content for validation)
             valid_results = []
             for filepath, score in top_5:
-                content = self.test_files[filepath]["content"]
-                is_valid = validate_file_for_concept(filepath, content, concept_name)
+                content_full = self.test_files[filepath]["content_full"]
+                is_valid = validate_file_for_concept(filepath, content_full, concept_name)
                 valid_results.append(
                     {"file": filepath, "score": float(score), "valid": is_valid}
                 )
@@ -301,7 +303,7 @@ class ColabEmbeddingTester:
 
         inference_time = time.time() - start_time
 
-        # Calculate pass rate (concepts with P@5 >= 0.6)
+        # Calculate pass rate
         pass_count = sum(1 for r in concept_results if r["precision_at_5"] >= 0.6)
         pass_rate = pass_count / total_concepts
 
@@ -325,8 +327,8 @@ class ColabEmbeddingTester:
             "per_concept": concept_results,
             "prefixes_used": {
                 "query": get_model_prefix(model_name, "query"),
-                "document": get_model_prefix(model_name, "document"),
-            },
+                "document": get_model_prefix(model_name, "document")
+            }
         }
 
         # Print summary
@@ -350,19 +352,16 @@ class ColabEmbeddingTester:
         if not results_list:
             return "No results to compare"
 
-        # Filter out errored results
         valid_results = [r for r in results_list if "error" not in r]
         if not valid_results:
             return "All models failed to produce results."
 
-        # Sort by P@5 (best first)
         valid_results = sorted(
             valid_results,
             key=lambda x: x.get("overall_precision_at_5", 0),
             reverse=True,
         )
 
-        # Create markdown table
         table = "\n## Model Comparison\n\n"
         table += (
             "| Model | P@5 | P@1 | MRR | Pass Rate | Time (s) | Device | Decision |\n"
@@ -379,7 +378,6 @@ class ColabEmbeddingTester:
             time_s = result["inference_time_seconds"]
             device = result.get("device", "unknown")
 
-            # Decision logic (ADJUSTED THRESHOLDS)
             if p5 >= 0.60:
                 decision = "✅ GO"
             elif p5 >= 0.50:
@@ -389,7 +387,6 @@ class ColabEmbeddingTester:
 
             table += f"| {result['model']} | {p5:.1%} | {p1:.1%} | {mrr:.3f} | {pass_rate:.1%} | {time_s:.1f} | {device} | {decision} |\n"
 
-        # Add decision summary
         best = valid_results[0]
         best_p5 = best["overall_precision_at_5"]
 
@@ -399,17 +396,14 @@ class ColabEmbeddingTester:
             table += f"**✅ PROCEED TO PHASE 2** with `{best['model']}`\n\n"
             table += f"- Achieves {best_p5:.1%} P@5 (threshold: ≥60%)\n"
             table += f"- {best['concepts_passed']}/{best['total_concepts']} concepts pass (P@5≥60%)\n"
-            table += f"- Device: {best.get('device', 'unknown')}\n"
         elif best_p5 >= 0.50:
             table += f"**⚠️ CONDITIONAL PROCEED** - Acceptable for MVP\n\n"
             table += f"- Best model: `{best['model']}` at {best_p5:.1%} P@5\n"
             table += f"- Meets minimum threshold (≥50% P@5)\n"
-            table += f"- Recommendation: Proceed to Phase 2 with reduced scope or refinements\n"
         else:
             table += f"**❌ STOP PROJECT** - Embedding approach not viable\n\n"
             table += f"- Best model: `{best['model']}` at {best_p5:.1%} P@5\n"
             table += f"- Threshold: ≥50% for conditional proceed\n"
-            table += f"- Recommendation: Consider alternative approaches or wait for better models\n"
 
         return table
 
@@ -422,9 +416,8 @@ class ColabEmbeddingTester:
 
 
 def setup_hf_auth():
-    """Setup HuggingFace authentication for gated models"""
+    """Setup HuggingFace authentication"""
     try:
-        # Try Colab secrets first
         from google.colab import userdata
         from huggingface_hub import login
 
@@ -435,20 +428,15 @@ def setup_hf_auth():
             return True
         else:
             print("⚠️ No HF_TOKEN in Colab secrets")
-            print("   Some gated models (embeddinggemma-300m) will fail")
-            print("   Add token via left sidebar → 🔑 Secrets")
             return False
     except ImportError:
-        # Not in Colab
         try:
             from huggingface_hub import login
-
-            login()  # Will use cached token or prompt
+            login()
             print("✅ Authenticated with HuggingFace")
             return True
         except Exception as e:
             print(f"⚠️ HuggingFace auth failed: {e}")
-            print("   Some gated models may fail")
             return False
     except Exception as e:
         print(f"⚠️ HuggingFace auth failed: {e}")
@@ -456,36 +444,31 @@ def setup_hf_auth():
 
 
 def main():
-    """
-    Main testing workflow optimized for Colab (FIXED VERSION)
-    Usage: python test_embeddings_fixed.py
-    """
-    # Setup authentication first
+    """Main testing workflow (MEMORY OPTIMIZED)"""
     print("\n🔐 Setting up authentication...")
     setup_hf_auth()
 
-    # Initialize tester
-    tester = ColabEmbeddingTester()
+    # Initialize tester with truncation
+    tester = ColabEmbeddingTester(max_tokens=512)  # Truncate to 512 tokens
 
-    # Load test files
     file_count = tester.load_test_files()
     if file_count == 0:
         print("❌ No test files found. Run dataset_generator.py first!")
         return
 
-    print(
-        f"\n✅ Ready to test on {file_count} files and {len(ALL_VALIDATORS)} concepts"
-    )
+    print(f"\n✅ Ready to test on {file_count} files and {len(ALL_VALIDATORS)} concepts")
 
     # UPDATED: Priority order - Code-specific models first
     models_to_test = [
-        # PRIORITY 1: Code-specific models (NEW)
-        "nomic-ai/CodeRankEmbed",  # 137M params, SOTA for size
-        "nomic-ai/nomic-embed-text-v1.5",  # 7B params, best overall
+        # PRIORITY 1: Code-specific models
+        "nomic-ai/CodeRankEmbed",              # Test first!
+        "nomic-ai/nomic-embed-text-v1.5",
+        
         # Previously tested (with proper prefixes now)
         "intfloat/multilingual-e5-large-instruct",
         "Alibaba-NLP/gte-multilingual-base",
-        # Lower priority (keeping for comparison)
+        
+        # Lower priority
         "Qwen/Qwen3-Embedding-0.6B",
         "google/embeddinggemma-300m",
     ]
@@ -497,21 +480,22 @@ def main():
         print(f"Loading model: {model_name}")
         print("#" * 60)
 
+        # Clear GPU memory before loading new model
+        if tester.device == "cuda":
+            torch.cuda.empty_cache()
+            gc.collect()
+
         try:
-            # Model-specific loading kwargs
             model_kwargs = {"device": tester.device}
 
-            # Add trust_remote_code for specific models
             if any(x in model_name for x in ["Alibaba-NLP", "nomic", "Qwen"]):
                 model_kwargs["trust_remote_code"] = True
                 print("  → Using trust_remote_code=True")
 
-            # Use fp16 for memory efficiency on GPU
             if tester.device == "cuda":
                 model_kwargs["model_kwargs"] = {"torch_dtype": torch.float16}
                 print("  → Using torch.float16 for memory efficiency")
 
-            # Show prefix info
             query_prefix = get_model_prefix(model_name, "query")
             doc_prefix = get_model_prefix(model_name, "document")
             if query_prefix or doc_prefix:
@@ -523,11 +507,10 @@ def main():
             results = tester.test_model(model_name, model)
             all_results.append(results)
 
-            # Save individual results
             safe_name = model_name.replace("/", "_")
             tester.save_results(results, f"results_{safe_name}.json")
 
-            # Clear memory
+            # Aggressive cleanup
             del model
             if tester.device == "cuda":
                 torch.cuda.empty_cache()
@@ -536,9 +519,13 @@ def main():
         except Exception as e:
             print(f"❌ Failed to test {model_name}: {e}")
             import traceback
-
             traceback.print_exc()
             all_results.append({"model": model_name, "error": str(e)})
+            
+            # Try to recover from OOM
+            if tester.device == "cuda":
+                torch.cuda.empty_cache()
+            gc.collect()
             continue
 
     # Generate comparison
@@ -546,12 +533,10 @@ def main():
         comparison = tester.compare_models(all_results)
         print("\n\n" + comparison)
 
-        # Save comparison
         with open("comparison.md", "w") as f:
             f.write(comparison)
         print("\n💾 Comparison saved to comparison.md")
 
-        # Save all results
         tester.save_results(
             {"all_models": all_results, "comparison_table": comparison},
             "all_results.json",
