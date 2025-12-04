@@ -1,7 +1,7 @@
 """
-Quick Validation Script: Test CodeRankEmbed on 5 Concepts
+Quick Validation Script: Test CodeRankEmbed on 5 Concepts (MEMORY FIXED)
 Run this FIRST to validate the fix before running full test suite
-Expected time: 2-3 minutes
+Expected time: 3-5 minutes
 """
 
 import json
@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 import numpy as np
 import torch
+import gc
 from sentence_transformers import SentenceTransformer
 from concept_validators import ALL_VALIDATORS, validate_file_for_concept
 
@@ -25,6 +26,36 @@ def cosine_similarity(vec1: np.ndarray, vec2: np.ndarray) -> float:
     return dot_product / (norm1 * norm2)
 
 
+def embed_in_chunks(model, texts, batch_size=1, device="cuda"):
+    """Embed texts in small chunks with aggressive memory cleanup"""
+    all_embeddings = []
+    
+    for i in range(0, len(texts), batch_size):
+        chunk = texts[i:i+batch_size]
+        
+        # Embed chunk
+        chunk_embeddings = model.encode(
+            chunk,
+            show_progress_bar=False,
+            batch_size=1,  # Process one at a time
+            device=device,
+            convert_to_numpy=True
+        )
+        
+        # Handle single item vs batch
+        if batch_size == 1:
+            all_embeddings.append(chunk_embeddings)
+        else:
+            all_embeddings.extend(chunk_embeddings)
+        
+        # Aggressive cleanup after each chunk
+        if device == "cuda":
+            torch.cuda.empty_cache()
+        gc.collect()
+    
+    return np.array(all_embeddings)
+
+
 def quick_test_coderank():
     """Quick test of CodeRankEmbed on 5 representative concepts"""
     
@@ -36,15 +67,24 @@ def quick_test_coderank():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Device: {device}")
     
-    # Load model
+    # Clear memory before starting
+    if device == "cuda":
+        torch.cuda.empty_cache()
+    gc.collect()
+    
+    # Load model with memory optimization
     print("\n📦 Loading nomic-ai/CodeRankEmbed...")
     try:
+        model_kwargs = {"device": device}
+        if device == "cuda":
+            model_kwargs["model_kwargs"] = {"torch_dtype": torch.float16}
+        
         model = SentenceTransformer(
             "nomic-ai/CodeRankEmbed",
             trust_remote_code=True,
-            device=device
+            **model_kwargs
         )
-        print("✅ Model loaded")
+        print("✅ Model loaded (float16 for memory efficiency)")
     except Exception as e:
         print(f"❌ Failed to load model: {e}")
         return
@@ -65,6 +105,11 @@ def quick_test_coderank():
                 with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                 
+                # Truncate to 512 tokens (prevent OOM)
+                words = content.split()
+                if len(words) > 384:  # ~512 tokens
+                    content = ' '.join(words[:384]) + "..."
+                
                 relative_path = str(filepath.relative_to(test_data_dir))
                 test_files[relative_path] = content
     
@@ -75,24 +120,33 @@ def quick_test_coderank():
         return
     
     # Embed files (NO prefix for documents with CodeRankEmbed)
-    print("\n🔄 Embedding code files...")
+    print("\n📄 Embedding code files...")
+    print("  ⚠️ Using batch_size=1 and chunked processing (memory optimization)")
+    
     file_list = list(test_files.keys())
     content_list = [test_files[f] for f in file_list]
     
-    file_embeddings = model.encode(
-        content_list,
-        show_progress_bar=True,
-        batch_size=8,
-        device=device,
-        convert_to_numpy=True
-    )
-    
-    file_embedding_dict = {
-        filepath: emb 
-        for filepath, emb in zip(file_list, file_embeddings)
-    }
-    
-    print(f"✅ Embedded {len(file_embedding_dict)} files")
+    # FIXED: Use chunked embedding with batch_size=1
+    try:
+        file_embeddings_array = embed_in_chunks(
+            model, 
+            content_list, 
+            batch_size=1,  # Process one file at a time
+            device=device
+        )
+        
+        file_embedding_dict = {
+            filepath: emb 
+            for filepath, emb in zip(file_list, file_embeddings_array)
+        }
+        
+        print(f"✅ Embedded {len(file_embedding_dict)} files")
+        
+    except Exception as e:
+        print(f"❌ Error during embedding: {e}")
+        import traceback
+        traceback.print_exc()
+        return
     
     # Test 5 representative concepts
     test_concepts = [
@@ -111,7 +165,11 @@ def quick_test_coderank():
     for concept in test_concepts:
         # Embed query WITH prefix
         query_text = f"Represent this query for searching relevant code: {concept}"
-        query_embedding = model.encode(query_text, device=device, convert_to_numpy=True)
+        query_embedding = model.encode(
+            query_text, 
+            device=device, 
+            convert_to_numpy=True
+        )
         
         # Calculate similarities
         similarities = {
@@ -158,10 +216,10 @@ def quick_test_coderank():
     # Decision
     if avg_p5 >= 0.50:
         print("\n🎉 PROMISING! Proceed with full test suite.")
-        print("   Run: python test_embeddings_fixed.py")
+        print("   Run: python test_embeddings.py")
     elif avg_p5 >= 0.35:
         print("\n⚠️  MIXED RESULTS. Full test recommended to confirm.")
-        print("   Run: python test_embeddings_fixed.py")
+        print("   Run: python test_embeddings.py")
     else:
         print("\n❌ POOR RESULTS. May need to investigate further.")
         print("   Check if dataset is loaded correctly.")

@@ -1,9 +1,9 @@
 """
-Phase 1: Embedding Model Tester (MEMORY OPTIMIZED)
-- Fixed OOM issues for CodeRankEmbed
+Phase 1: Embedding Model Tester (MEMORY OPTIMIZED - OOM FIXED)
+- Fixed OOM issues for CodeRankEmbed (batch_size=1, chunked processing)
 - Added text truncation to 512 tokens max
-- Reduced batch sizes for large models
 - Added aggressive memory cleanup
+- Added proper prefixes for all models
 """
 
 import json
@@ -18,43 +18,34 @@ from concept_validators import ALL_VALIDATORS, validate_file_for_concept
 
 
 # ============================================================================
-# MODEL PREFIX MAPPINGS (FIXED)
+# MODEL PREFIX MAPPINGS (COMPLETE)
 # ============================================================================
 
 MODEL_PREFIXES = {
     "nomic-ai/nomic-embed-text-v1.5": {
         "query": "search_query: ",
-        "document": "search_document: "
+        "document": "search_document: ",
     },
     "nomic-ai/nomic-embed-code": {
         "query": "search_query: ",
-        "document": "search_document: "
+        "document": "search_document: ",
     },
     "nomic-ai/CodeRankEmbed": {
         "query": "Represent this query for searching relevant code: ",
-        "document": ""  # No prefix for documents
+        "document": "",  # No prefix for documents
     },
     "intfloat/multilingual-e5-large-instruct": {
         "query": "query: ",
-        "document": "passage: "
+        "document": "passage: ",
     },
     "BAAI/bge-small-en-v1.5": {
         "query": "Represent this sentence for searching relevant passages: ",
-        "document": ""
+        "document": "",
     },
-    "Qwen/Qwen3-Embedding-0.6B": {
-        "query": "query: ",
-        "document": ""
-    },
+    "Qwen/Qwen3-Embedding-0.6B": {"query": "query: ", "document": ""},
     # Models that don't need prefixes
-    "Alibaba-NLP/gte-multilingual-base": {
-        "query": "",
-        "document": ""
-    },
-    "google/embeddinggemma-300m": {
-        "query": "",
-        "document": ""
-    }
+    "Alibaba-NLP/gte-multilingual-base": {"query": "", "document": ""},
+    "google/embeddinggemma-300m": {"query": "", "document": ""},
 }
 
 
@@ -72,13 +63,57 @@ def truncate_text(text: str, max_tokens: int = 512) -> str:
     """
     words = text.split()
     max_words = int(max_tokens * 0.75)
-    
+
     if len(words) <= max_words:
         return text
-    
+
     # Truncate and add marker
-    truncated = ' '.join(words[:max_words])
+    truncated = " ".join(words[:max_words])
     return truncated + "..."
+
+
+def embed_in_chunks(
+    model, texts: List[str], batch_size: int, device: str
+) -> np.ndarray:
+    """
+    Embed texts in chunks with aggressive memory cleanup
+    Essential for CodeRankEmbed which has high memory requirements
+    """
+    all_embeddings = []
+    total = len(texts)
+
+    print(f"  → Processing {total} items in chunks of {batch_size}")
+
+    for i in range(0, total, batch_size):
+        chunk = texts[i : i + batch_size]
+        chunk_size = len(chunk)
+
+        # Show progress
+        if i % 10 == 0:
+            print(f"  → Progress: {i}/{total} ({i*100//total}%)")
+
+        # Embed chunk
+        chunk_embeddings = model.encode(
+            chunk,
+            show_progress_bar=False,
+            batch_size=1,  # Always use batch_size=1 within chunks
+            device=device,
+            convert_to_numpy=True,
+        )
+
+        # Handle single item vs batch
+        if chunk_size == 1:
+            all_embeddings.append(chunk_embeddings)
+        else:
+            all_embeddings.extend(chunk_embeddings)
+
+        # Aggressive cleanup after each chunk
+        if device == "cuda":
+            torch.cuda.empty_cache()
+        gc.collect()
+
+    print(f"  → Completed: {total}/{total} (100%)")
+    return np.array(all_embeddings)
 
 
 class ColabEmbeddingTester:
@@ -90,7 +125,7 @@ class ColabEmbeddingTester:
         self.results = {}
         self.device = self._setup_device()
         self.current_model_name = None
-        self.max_tokens = max_tokens  # Prevent OOM
+        self.max_tokens = max_tokens
 
     def _setup_device(self):
         """Detect and setup GPU if available"""
@@ -133,14 +168,16 @@ class ColabEmbeddingTester:
                         relative_path = str(filepath.relative_to(self.test_data_dir))
                         self.test_files[relative_path] = {
                             "content": content_truncated,  # Use truncated
-                            "content_full": content,       # Keep full for validation
+                            "content_full": content,  # Keep full for validation
                             "language": lang_dir,
                             "path": str(filepath),
                         }
                     except Exception as e:
                         print(f"  Error loading {filepath}: {e}")
 
-        print(f"  ✅ Loaded {len(self.test_files)} files (truncated to {self.max_tokens} tokens)")
+        print(
+            f"  ✅ Loaded {len(self.test_files)} files (truncated to {self.max_tokens} tokens)"
+        )
         return len(self.test_files)
 
     def cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
@@ -154,59 +191,64 @@ class ColabEmbeddingTester:
 
         return dot_product / (norm1 * norm2)
 
-    def embed_documents(self, model, texts: List[str], batch_size: int = 4) -> np.ndarray:
+    def embed_documents(
+        self, model, texts: List[str], batch_size: int = 8
+    ) -> np.ndarray:
         """
         Embed documents with proper prefix (MEMORY OPTIMIZED)
         """
         doc_prefix = get_model_prefix(self.current_model_name, "document")
-        
+
         if doc_prefix:
             prefixed_texts = [f"{doc_prefix}{text}" for text in texts]
-            print(f"  → Using document prefix: '{doc_prefix}' (applied to {len(texts)} docs)")
+            print(
+                f"  → Using document prefix: '{doc_prefix}' (applied to {len(texts)} docs)"
+            )
         else:
             prefixed_texts = texts
-        
-        # FIXED: Use smaller batch size for CodeRankEmbed
+
+        # FIXED: Use chunked processing for CodeRankEmbed
         if "CodeRankEmbed" in self.current_model_name:
-            batch_size = 2  # Very small batch
-            print(f"  → Using batch_size={batch_size} for CodeRankEmbed (memory optimization)")
-        
-        embeddings = model.encode(
-            prefixed_texts,
-            show_progress_bar=True,
-            batch_size=batch_size,
-            device=self.device,
-            convert_to_numpy=True,
-        )
-        
+            print(f"  → Using chunked processing for CodeRankEmbed (batch_size=1)")
+            embeddings = embed_in_chunks(
+                model, prefixed_texts, batch_size=1, device=self.device
+            )
+        else:
+            # Normal processing for other models
+            embeddings = model.encode(
+                prefixed_texts,
+                show_progress_bar=True,
+                batch_size=batch_size,
+                device=self.device,
+                convert_to_numpy=True,
+            )
+
         # Clear cache after embedding
         if self.device == "cuda":
             torch.cuda.empty_cache()
             gc.collect()
-        
+
         return embeddings
 
     def embed_query(self, model, query: str) -> np.ndarray:
         """Embed query with proper prefix"""
         query_prefix = get_model_prefix(self.current_model_name, "query")
-        
+
         if query_prefix:
             prefixed_query = f"{query_prefix}{query}"
         else:
             prefixed_query = query
-        
+
         embedding = model.encode(
-            prefixed_query,
-            device=self.device,
-            convert_to_numpy=True
+            prefixed_query, device=self.device, convert_to_numpy=True
         )
-        
+
         return embedding
 
     def test_model(self, model_name: str, model) -> Dict:
         """Test a single embedding model on all concepts"""
         self.current_model_name = model_name
-        
+
         print(f"\n{'='*60}")
         print(f"Testing Model: {model_name}")
         print(f"Device: {self.device}")
@@ -221,10 +263,12 @@ class ColabEmbeddingTester:
         content_list = [self.test_files[f]["content"] for f in file_list]
 
         try:
-            # Determine batch size
-            batch_size = 2 if "CodeRankEmbed" in model_name else 8
-            
-            embeddings = self.embed_documents(model, content_list, batch_size=batch_size)
+            # Determine batch size (CodeRankEmbed uses chunked processing internally)
+            batch_size = 1 if "CodeRankEmbed" in model_name else 8
+
+            embeddings = self.embed_documents(
+                model, content_list, batch_size=batch_size
+            )
 
             for filepath, embedding in zip(file_list, embeddings):
                 file_embeddings[filepath] = embedding
@@ -234,6 +278,7 @@ class ColabEmbeddingTester:
         except Exception as e:
             print(f"  ❌ Error embedding files: {e}")
             import traceback
+
             traceback.print_exc()
             return {"error": str(e)}
 
@@ -244,7 +289,7 @@ class ColabEmbeddingTester:
         for concept_name in ALL_VALIDATORS.keys():
             try:
                 query_embedding = self.embed_query(model, concept_name)
-                
+
             except Exception as e:
                 print(f"  ❌ Error embedding query '{concept_name}': {e}")
                 continue
@@ -262,7 +307,9 @@ class ColabEmbeddingTester:
             valid_results = []
             for filepath, score in top_5:
                 content_full = self.test_files[filepath]["content_full"]
-                is_valid = validate_file_for_concept(filepath, content_full, concept_name)
+                is_valid = validate_file_for_concept(
+                    filepath, content_full, concept_name
+                )
                 valid_results.append(
                     {"file": filepath, "score": float(score), "valid": is_valid}
                 )
@@ -327,8 +374,8 @@ class ColabEmbeddingTester:
             "per_concept": concept_results,
             "prefixes_used": {
                 "query": get_model_prefix(model_name, "query"),
-                "document": get_model_prefix(model_name, "document")
-            }
+                "document": get_model_prefix(model_name, "document"),
+            },
         }
 
         # Print summary
@@ -432,6 +479,7 @@ def setup_hf_auth():
     except ImportError:
         try:
             from huggingface_hub import login
+
             login()
             print("✅ Authenticated with HuggingFace")
             return True
@@ -449,25 +497,25 @@ def main():
     setup_hf_auth()
 
     # Initialize tester with truncation
-    tester = ColabEmbeddingTester(max_tokens=512)  # Truncate to 512 tokens
+    tester = ColabEmbeddingTester(max_tokens=512)
 
     file_count = tester.load_test_files()
     if file_count == 0:
         print("❌ No test files found. Run dataset_generator.py first!")
         return
 
-    print(f"\n✅ Ready to test on {file_count} files and {len(ALL_VALIDATORS)} concepts")
+    print(
+        f"\n✅ Ready to test on {file_count} files and {len(ALL_VALIDATORS)} concepts"
+    )
 
     # UPDATED: Priority order - Code-specific models first
     models_to_test = [
         # PRIORITY 1: Code-specific models
-        "nomic-ai/CodeRankEmbed",              # Test first!
+        "nomic-ai/CodeRankEmbed",  # Test first with fixed memory!
         "nomic-ai/nomic-embed-text-v1.5",
-        
-        # Previously tested (with proper prefixes now)
+        # Previously tested (now with proper prefixes)
         "intfloat/multilingual-e5-large-instruct",
         "Alibaba-NLP/gte-multilingual-base",
-        
         # Lower priority
         "Qwen/Qwen3-Embedding-0.6B",
         "google/embeddinggemma-300m",
@@ -519,9 +567,10 @@ def main():
         except Exception as e:
             print(f"❌ Failed to test {model_name}: {e}")
             import traceback
+
             traceback.print_exc()
             all_results.append({"model": model_name, "error": str(e)})
-            
+
             # Try to recover from OOM
             if tester.device == "cuda":
                 torch.cuda.empty_cache()
