@@ -1,0 +1,692 @@
+{
+  "model": "nomic-ai/CodeRankEmbed",
+  "overall_precision_at_5": 0.3100000000000001,
+  "overall_precision_at_1": 0.35,
+  "overall_mrr": 0.51,
+  "pass_rate": 0.15,
+  "concepts_passed": 3,
+  "total_concepts": 20,
+  "inference_time_seconds": 214.3558669090271,
+  "per_concept": [
+    {
+      "concept": "context managers python",
+      "precision_at_5": 0.6,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "valid_in_top5": 3,
+      "top_5_results": [
+        {
+          "file": "python/django_django_04.py",
+          "score": 0.2876288592815399,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.2663736045360565,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_04.py",
+          "score": 0.26036515831947327,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.24606569111347198,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_06.py",
+          "score": 0.23710018396377563,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "async await python",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.2,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "javascript/vercel_next.js_09.ts",
+          "score": 0.22179625928401947,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_06.ts",
+          "score": 0.18294166028499603,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.17736360430717468,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_10.ts",
+          "score": 0.166547954082489,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_03.py",
+          "score": 0.1584344059228897,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "decorators python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_04.js",
+          "score": 0.2558893859386444,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.24706360697746277,
+          "valid": false
+        },
+        {
+          "file": "python/django_django_04.py",
+          "score": 0.24427689611911774,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_08.py",
+          "score": 0.2414586991071701,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_07.py",
+          "score": 0.23663078248500824,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "list comprehensions python",
+      "precision_at_5": 0.4,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_01.py",
+          "score": 0.18799327313899994,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_10.py",
+          "score": 0.14633163809776306,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_08.py",
+          "score": 0.14035098254680634,
+          "valid": false
+        },
+        {
+          "file": "python/django_django_02.py",
+          "score": 0.13249705731868744,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.12833794951438904,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "exception handling python",
+      "precision_at_5": 0.4,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.25,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_03.py",
+          "score": 0.3154066503047943,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.3001847565174103,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.2687579095363617,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_08.py",
+          "score": 0.2331896275281906,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": 0.21780230104923248,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "generators python",
+      "precision_at_5": 0.6,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 3,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_08.py",
+          "score": 0.23983529210090637,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": 0.2158980369567871,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_01.py",
+          "score": 0.20268376171588898,
+          "valid": true
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.20210294425487518,
+          "valid": false
+        },
+        {
+          "file": "javascript/expressjs_express_02.js",
+          "score": 0.1943870484828949,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "class inheritance python",
+      "precision_at_5": 0.4,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.2737187147140503,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.26509448885917664,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.23235628008842468,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": 0.22038038074970245,
+          "valid": false
+        },
+        {
+          "file": "python/django_django_11.py",
+          "score": 0.21074892580509186,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "file handling python",
+      "precision_at_5": 0.4,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/django_django_11.py",
+          "score": 0.2627999782562256,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": 0.181517094373703,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.17996828258037567,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.1689128279685974,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_10.ts",
+          "score": 0.16761882603168488,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "lambda functions python",
+      "precision_at_5": 0.4,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/django_django_10.py",
+          "score": 0.2235759049654007,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.21875323355197906,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_08.py",
+          "score": 0.21829381585121155,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.2036350965499878,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": 0.19966189563274384,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "dataclasses python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.27091729640960693,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_09.py",
+          "score": 0.23021145164966583,
+          "valid": false
+        },
+        {
+          "file": "python/django_django_11.py",
+          "score": 0.22898519039154053,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_09.py",
+          "score": 0.22060896456241608,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_04.js",
+          "score": 0.20966634154319763,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "promises javascript",
+      "precision_at_5": 0.2,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.2134082019329071,
+          "valid": true
+        },
+        {
+          "file": "javascript/vercel_next.js_11.ts",
+          "score": 0.2104741483926773,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.19826394319534302,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_06.ts",
+          "score": 0.1966007500886917,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.19059500098228455,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "async await javascript",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "javascript/vercel_next.js_09.ts",
+          "score": 0.25604498386383057,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_06.ts",
+          "score": 0.23342950642108917,
+          "valid": true
+        },
+        {
+          "file": "javascript/vercel_next.js_10.ts",
+          "score": 0.22165527939796448,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.21262693405151367,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.1722935140132904,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "react hooks",
+      "precision_at_5": 0.8,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 4,
+      "top_5_results": [
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.3677968680858612,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_04.js",
+          "score": 0.3134782910346985,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_10.js",
+          "score": 0.308849036693573,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_11.js",
+          "score": 0.3012533485889435,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_01.js",
+          "score": 0.3000149726867676,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "closures javascript",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.24575930833816528,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.2171875536441803,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_08.js",
+          "score": 0.19333940744400024,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.18909010291099548,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_09.ts",
+          "score": 0.1840195655822754,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "arrow functions javascript",
+      "precision_at_5": 0.4,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "javascript/vercel_next.js_09.ts",
+          "score": 0.21382778882980347,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.1994900107383728,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.19243678450584412,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_05.py",
+          "score": 0.17722253501415253,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.17438969016075134,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "destructuring javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/django_django_10.py",
+          "score": 0.20511893928050995,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.20370517671108246,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.1982167661190033,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.1801684945821762,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.17058366537094116,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "event handling javascript",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.25,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.16191193461418152,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.14418815076351166,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.14368800818920135,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.13123181462287903,
+          "valid": true
+        },
+        {
+          "file": "javascript/expressjs_express_01.js",
+          "score": 0.1274774819612503,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "callbacks javascript",
+      "precision_at_5": 0.4,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.1669190227985382,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.16042719781398773,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.1584763377904892,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_09.ts",
+          "score": 0.14997880160808563,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.1401079297065735,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "array methods javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/django_django_05.py",
+          "score": 0.19974981248378754,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.17636337876319885,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_08.js",
+          "score": 0.14605939388275146,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.1405826210975647,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.13024170696735382,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "classes javascript",
+      "precision_at_5": 0.4,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.2953740656375885,
+          "valid": true
+        },
+        {
+          "file": "python/aio-libs_aiohttp_09.py",
+          "score": 0.2596955895423889,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.23543748259544373,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.2321792095899582,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.22675251960754395,
+          "valid": true
+        }
+      ]
+    }
+  ]
+}

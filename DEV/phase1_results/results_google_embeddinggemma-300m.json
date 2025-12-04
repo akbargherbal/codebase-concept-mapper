@@ -1,0 +1,694 @@
+{
+  "model": "google/embeddinggemma-300m",
+  "device": "cuda",
+  "gpu_memory_gb": 6.14592,
+  "overall_precision_at_5": 0.06999999999999999,
+  "overall_precision_at_1": 0.05,
+  "overall_mrr": 0.10416666666666667,
+  "pass_rate": 0.05,
+  "concepts_passed": 1,
+  "total_concepts": 20,
+  "inference_time_seconds": 8.554930448532104,
+  "per_concept": [
+    {
+      "concept": "context managers python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "async await python",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "decorators python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "list comprehensions python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "exception handling python",
+      "precision_at_5": 0.6,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 3,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": true
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "generators python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "class inheritance python",
+      "precision_at_5": 0.4,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "file handling python",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.25,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "lambda functions python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "dataclasses python",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "promises javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "async await javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "react hooks",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "closures javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "arrow functions javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "destructuring javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "event handling javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "callbacks javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "array methods javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "classes javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_04.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_11.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": NaN,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": NaN,
+          "valid": false
+        }
+      ]
+    }
+  ]
+}

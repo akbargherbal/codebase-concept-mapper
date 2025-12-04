@@ -1,0 +1,1245 @@
+{
+  "generation_date": "2025-12-04T07:22:54.554605",
+  "repos": {
+    "pallets/flask": {
+      "url": "https://github.com/pallets/flask",
+      "source_dir": "src/flask",
+      "files_sampled": 12,
+      "files": [
+        {
+          "output_file": "python/pallets_flask_01.py",
+          "original_path": "temp_repos/flask/src/flask/typing.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 87
+        },
+        {
+          "output_file": "python/pallets_flask_02.py",
+          "original_path": "temp_repos/flask/src/flask/sessions.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 399
+        },
+        {
+          "output_file": "python/pallets_flask_03.py",
+          "original_path": "temp_repos/flask/src/flask/globals.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 77
+        },
+        {
+          "output_file": "python/pallets_flask_04.py",
+          "original_path": "temp_repos/flask/src/flask/blueprints.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 128
+        },
+        {
+          "output_file": "python/pallets_flask_05.py",
+          "original_path": "temp_repos/flask/src/flask/debughelpers.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 179
+        },
+        {
+          "output_file": "python/pallets_flask_06.py",
+          "original_path": "temp_repos/flask/src/flask/templating.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 211
+        },
+        {
+          "output_file": "python/pallets_flask_07.py",
+          "original_path": "temp_repos/flask/src/flask/logging.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 79
+        },
+        {
+          "output_file": "python/pallets_flask_08.py",
+          "original_path": "temp_repos/flask/src/flask/wrappers.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 257
+        },
+        {
+          "output_file": "python/pallets_flask_09.py",
+          "original_path": "temp_repos/flask/src/flask/views.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 191
+        },
+        {
+          "output_file": "python/pallets_flask_10.py",
+          "original_path": "temp_repos/flask/src/flask/json/tag.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 327
+        },
+        {
+          "output_file": "python/pallets_flask_11.py",
+          "original_path": "temp_repos/flask/src/flask/json/provider.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 215
+        },
+        {
+          "output_file": "python/pallets_flask_12.py",
+          "original_path": "temp_repos/flask/src/flask/json/__init__.py",
+          "repo": "pallets/flask",
+          "language": "python",
+          "lines": 170
+        }
+      ]
+    },
+    "psf/requests": {
+      "url": "https://github.com/psf/requests",
+      "source_dir": "src/requests",
+      "files_sampled": 9,
+      "files": [
+        {
+          "output_file": "python/psf_requests_01.py",
+          "original_path": "temp_repos/requests/src/requests/api.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 157
+        },
+        {
+          "output_file": "python/psf_requests_02.py",
+          "original_path": "temp_repos/requests/src/requests/_internal_utils.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 50
+        },
+        {
+          "output_file": "python/psf_requests_03.py",
+          "original_path": "temp_repos/requests/src/requests/structures.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 99
+        },
+        {
+          "output_file": "python/psf_requests_04.py",
+          "original_path": "temp_repos/requests/src/requests/help.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 134
+        },
+        {
+          "output_file": "python/psf_requests_05.py",
+          "original_path": "temp_repos/requests/src/requests/__init__.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 184
+        },
+        {
+          "output_file": "python/psf_requests_06.py",
+          "original_path": "temp_repos/requests/src/requests/auth.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 314
+        },
+        {
+          "output_file": "python/psf_requests_07.py",
+          "original_path": "temp_repos/requests/src/requests/compat.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 106
+        },
+        {
+          "output_file": "python/psf_requests_08.py",
+          "original_path": "temp_repos/requests/src/requests/status_codes.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 128
+        },
+        {
+          "output_file": "python/psf_requests_09.py",
+          "original_path": "temp_repos/requests/src/requests/exceptions.py",
+          "repo": "psf/requests",
+          "language": "python",
+          "lines": 151
+        }
+      ]
+    },
+    "aio-libs/aiohttp": {
+      "url": "https://github.com/aio-libs/aiohttp",
+      "source_dir": "aiohttp",
+      "files_sampled": 12,
+      "files": [
+        {
+          "output_file": "python/aio-libs_aiohttp_01.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/formdata.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 161
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_02.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/http_writer.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 390
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_03.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/client_ws.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 429
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_04.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/_websocket/reader_c.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 485
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_05.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/web_server.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 126
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_06.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/worker.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 242
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_07.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/http_exceptions.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 109
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_08.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/client_middleware_digest_auth.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 465
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_09.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/_websocket/reader_py.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 485
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_10.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/client_exceptions.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 377
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_11.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/client_middlewares.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 55
+        },
+        {
+          "output_file": "python/aio-libs_aiohttp_12.py",
+          "original_path": "temp_repos/aiohttp/aiohttp/resolver.py",
+          "repo": "aio-libs/aiohttp",
+          "language": "python",
+          "lines": 236
+        }
+      ]
+    },
+    "django/django": {
+      "url": "https://github.com/django/django",
+      "source_dir": "django",
+      "files_sampled": 12,
+      "files": [
+        {
+          "output_file": "python/django_django_01.py",
+          "original_path": "temp_repos/django/django/utils/inspect.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 132
+        },
+        {
+          "output_file": "python/django_django_02.py",
+          "original_path": "temp_repos/django/django/utils/deprecation.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 330
+        },
+        {
+          "output_file": "python/django_django_03.py",
+          "original_path": "temp_repos/django/django/middleware/cache.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 233
+        },
+        {
+          "output_file": "python/django_django_04.py",
+          "original_path": "temp_repos/django/django/contrib/auth/decorators.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 135
+        },
+        {
+          "output_file": "python/django_django_05.py",
+          "original_path": "temp_repos/django/django/contrib/postgres/operations.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 352
+        },
+        {
+          "output_file": "python/django_django_06.py",
+          "original_path": "temp_repos/django/django/db/backends/oracle/utils.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 99
+        },
+        {
+          "output_file": "python/django_django_07.py",
+          "original_path": "temp_repos/django/django/core/serializers/pyyaml.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 88
+        },
+        {
+          "output_file": "python/django_django_08.py",
+          "original_path": "temp_repos/django/django/templatetags/tz.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 200
+        },
+        {
+          "output_file": "python/django_django_09.py",
+          "original_path": "temp_repos/django/django/views/decorators/csrf.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 69
+        },
+        {
+          "output_file": "python/django_django_10.py",
+          "original_path": "temp_repos/django/django/contrib/staticfiles/handlers.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 115
+        },
+        {
+          "output_file": "python/django_django_11.py",
+          "original_path": "temp_repos/django/django/core/cache/backends/memcached.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 189
+        },
+        {
+          "output_file": "python/django_django_12.py",
+          "original_path": "temp_repos/django/django/db/backends/base/introspection.py",
+          "repo": "django/django",
+          "language": "python",
+          "lines": 228
+        }
+      ]
+    },
+    "axios/axios": {
+      "url": "https://github.com/axios/axios",
+      "source_dir": "lib",
+      "files_sampled": 12,
+      "files": [
+        {
+          "output_file": "javascript/axios_axios_01.js",
+          "original_path": "temp_repos/axios/lib/helpers/formDataToStream.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 112
+        },
+        {
+          "output_file": "javascript/axios_axios_02.js",
+          "original_path": "temp_repos/axios/lib/helpers/HttpStatusCode.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 77
+        },
+        {
+          "output_file": "javascript/axios_axios_03.js",
+          "original_path": "temp_repos/axios/lib/helpers/AxiosURLSearchParams.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 58
+        },
+        {
+          "output_file": "javascript/axios_axios_04.js",
+          "original_path": "temp_repos/axios/lib/defaults/index.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 161
+        },
+        {
+          "output_file": "javascript/axios_axios_05.js",
+          "original_path": "temp_repos/axios/lib/helpers/AxiosTransformStream.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 143
+        },
+        {
+          "output_file": "javascript/axios_axios_06.js",
+          "original_path": "temp_repos/axios/lib/axios.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 89
+        },
+        {
+          "output_file": "javascript/axios_axios_07.js",
+          "original_path": "temp_repos/axios/lib/helpers/validator.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 99
+        },
+        {
+          "output_file": "javascript/axios_axios_08.js",
+          "original_path": "temp_repos/axios/lib/core/Axios.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 240
+        },
+        {
+          "output_file": "javascript/axios_axios_09.js",
+          "original_path": "temp_repos/axios/lib/helpers/speedometer.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 55
+        },
+        {
+          "output_file": "javascript/axios_axios_10.js",
+          "original_path": "temp_repos/axios/lib/helpers/parseHeaders.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 55
+        },
+        {
+          "output_file": "javascript/axios_axios_11.js",
+          "original_path": "temp_repos/axios/lib/helpers/cookies.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 53
+        },
+        {
+          "output_file": "javascript/axios_axios_12.js",
+          "original_path": "temp_repos/axios/lib/helpers/fromDataURI.js",
+          "repo": "axios/axios",
+          "language": "javascript",
+          "lines": 53
+        }
+      ]
+    },
+    "expressjs/express": {
+      "url": "https://github.com/expressjs/express",
+      "source_dir": "lib",
+      "files_sampled": 3,
+      "files": [
+        {
+          "output_file": "javascript/expressjs_express_01.js",
+          "original_path": "temp_repos/express/lib/express.js",
+          "repo": "expressjs/express",
+          "language": "javascript",
+          "lines": 81
+        },
+        {
+          "output_file": "javascript/expressjs_express_02.js",
+          "original_path": "temp_repos/express/lib/view.js",
+          "repo": "expressjs/express",
+          "language": "javascript",
+          "lines": 205
+        },
+        {
+          "output_file": "javascript/expressjs_express_03.js",
+          "original_path": "temp_repos/express/lib/utils.js",
+          "repo": "expressjs/express",
+          "language": "javascript",
+          "lines": 271
+        }
+      ]
+    },
+    "facebook/react": {
+      "url": "https://github.com/facebook/react",
+      "source_dir": "packages/react/src",
+      "files_sampled": 12,
+      "files": [
+        {
+          "output_file": "javascript/facebook_react_01.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactStartTransition.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 202
+        },
+        {
+          "output_file": "javascript/facebook_react_02.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactSharedInternalsServer.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 68
+        },
+        {
+          "output_file": "javascript/facebook_react_03.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactServer.fb.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 76
+        },
+        {
+          "output_file": "javascript/facebook_react_04.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactAct.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 366
+        },
+        {
+          "output_file": "javascript/facebook_react_05.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactSharedInternalsClient.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 82
+        },
+        {
+          "output_file": "javascript/facebook_react_06.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactNoopUpdateQueue.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 110
+        },
+        {
+          "output_file": "javascript/facebook_react_07.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactLazy.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 255
+        },
+        {
+          "output_file": "javascript/facebook_react_08.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactServer.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 67
+        },
+        {
+          "output_file": "javascript/facebook_react_09.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactTaint.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 138
+        },
+        {
+          "output_file": "javascript/facebook_react_10.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactTransitionType.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 50
+        },
+        {
+          "output_file": "javascript/facebook_react_11.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactServer.experimental.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 87
+        },
+        {
+          "output_file": "javascript/facebook_react_12.js",
+          "original_path": "temp_repos/react/packages/react/src/ReactBaseClasses.js",
+          "repo": "facebook/react",
+          "language": "javascript",
+          "lines": 146
+        }
+      ]
+    },
+    "vercel/next.js": {
+      "url": "https://github.com/vercel/next.js",
+      "source_dir": "packages/next/src",
+      "files_sampled": 12,
+      "files": [
+        {
+          "output_file": "javascript/vercel_next.js_01.tsx",
+          "original_path": "temp_repos/next.js/packages/next/src/next-devtools/dev-overlay/components/call-stack-frame/call-stack-frame.tsx",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 148
+        },
+        {
+          "output_file": "javascript/vercel_next.js_02.ts",
+          "original_path": "temp_repos/next.js/packages/next/src/trace/upload-trace.ts",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 58
+        },
+        {
+          "output_file": "javascript/vercel_next.js_03.js",
+          "original_path": "temp_repos/next.js/packages/next/src/compiled/@babel/runtime/helpers/esm/decorate.js",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 250
+        },
+        {
+          "output_file": "javascript/vercel_next.js_04.tsx",
+          "original_path": "temp_repos/next.js/packages/next/src/next-devtools/dev-overlay/components/hydration-diff/diff-view.tsx",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 134
+        },
+        {
+          "output_file": "javascript/vercel_next.js_05.ts",
+          "original_path": "temp_repos/next.js/packages/next/src/server/lib/incremental-cache/file-system-cache.ts",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 476
+        },
+        {
+          "output_file": "javascript/vercel_next.js_06.tsx",
+          "original_path": "temp_repos/next.js/packages/next/src/client/script.tsx",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 385
+        },
+        {
+          "output_file": "javascript/vercel_next.js_07.ts",
+          "original_path": "temp_repos/next.js/packages/next/src/lib/create-client-router-filter.ts",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 74
+        },
+        {
+          "output_file": "javascript/vercel_next.js_08.ts",
+          "original_path": "temp_repos/next.js/packages/next/src/server/web/spec-extension/request.ts",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 116
+        },
+        {
+          "output_file": "javascript/vercel_next.js_09.js",
+          "original_path": "temp_repos/next.js/packages/next/src/compiled/@babel/runtime/helpers/esm/applyDecs2311.js",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 124
+        },
+        {
+          "output_file": "javascript/vercel_next.js_10.ts",
+          "original_path": "temp_repos/next.js/packages/next/src/trace/trace-uploader.ts",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 198
+        },
+        {
+          "output_file": "javascript/vercel_next.js_11.ts",
+          "original_path": "temp_repos/next.js/packages/next/src/server/web/spec-extension/adapters/headers.ts",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 231
+        },
+        {
+          "output_file": "javascript/vercel_next.js_12.ts",
+          "original_path": "temp_repos/next.js/packages/next/src/server/lib/clone-response.ts",
+          "repo": "vercel/next.js",
+          "language": "javascript",
+          "lines": 82
+        }
+      ]
+    }
+  },
+  "files": [
+    {
+      "output_file": "python/pallets_flask_01.py",
+      "original_path": "temp_repos/flask/src/flask/typing.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 87
+    },
+    {
+      "output_file": "python/pallets_flask_02.py",
+      "original_path": "temp_repos/flask/src/flask/sessions.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 399
+    },
+    {
+      "output_file": "python/pallets_flask_03.py",
+      "original_path": "temp_repos/flask/src/flask/globals.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 77
+    },
+    {
+      "output_file": "python/pallets_flask_04.py",
+      "original_path": "temp_repos/flask/src/flask/blueprints.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 128
+    },
+    {
+      "output_file": "python/pallets_flask_05.py",
+      "original_path": "temp_repos/flask/src/flask/debughelpers.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 179
+    },
+    {
+      "output_file": "python/pallets_flask_06.py",
+      "original_path": "temp_repos/flask/src/flask/templating.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 211
+    },
+    {
+      "output_file": "python/pallets_flask_07.py",
+      "original_path": "temp_repos/flask/src/flask/logging.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 79
+    },
+    {
+      "output_file": "python/pallets_flask_08.py",
+      "original_path": "temp_repos/flask/src/flask/wrappers.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 257
+    },
+    {
+      "output_file": "python/pallets_flask_09.py",
+      "original_path": "temp_repos/flask/src/flask/views.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 191
+    },
+    {
+      "output_file": "python/pallets_flask_10.py",
+      "original_path": "temp_repos/flask/src/flask/json/tag.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 327
+    },
+    {
+      "output_file": "python/pallets_flask_11.py",
+      "original_path": "temp_repos/flask/src/flask/json/provider.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 215
+    },
+    {
+      "output_file": "python/pallets_flask_12.py",
+      "original_path": "temp_repos/flask/src/flask/json/__init__.py",
+      "repo": "pallets/flask",
+      "language": "python",
+      "lines": 170
+    },
+    {
+      "output_file": "python/psf_requests_01.py",
+      "original_path": "temp_repos/requests/src/requests/api.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 157
+    },
+    {
+      "output_file": "python/psf_requests_02.py",
+      "original_path": "temp_repos/requests/src/requests/_internal_utils.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 50
+    },
+    {
+      "output_file": "python/psf_requests_03.py",
+      "original_path": "temp_repos/requests/src/requests/structures.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 99
+    },
+    {
+      "output_file": "python/psf_requests_04.py",
+      "original_path": "temp_repos/requests/src/requests/help.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 134
+    },
+    {
+      "output_file": "python/psf_requests_05.py",
+      "original_path": "temp_repos/requests/src/requests/__init__.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 184
+    },
+    {
+      "output_file": "python/psf_requests_06.py",
+      "original_path": "temp_repos/requests/src/requests/auth.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 314
+    },
+    {
+      "output_file": "python/psf_requests_07.py",
+      "original_path": "temp_repos/requests/src/requests/compat.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 106
+    },
+    {
+      "output_file": "python/psf_requests_08.py",
+      "original_path": "temp_repos/requests/src/requests/status_codes.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 128
+    },
+    {
+      "output_file": "python/psf_requests_09.py",
+      "original_path": "temp_repos/requests/src/requests/exceptions.py",
+      "repo": "psf/requests",
+      "language": "python",
+      "lines": 151
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_01.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/formdata.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 161
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_02.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/http_writer.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 390
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_03.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/client_ws.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 429
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_04.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/_websocket/reader_c.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 485
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_05.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/web_server.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 126
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_06.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/worker.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 242
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_07.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/http_exceptions.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 109
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_08.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/client_middleware_digest_auth.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 465
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_09.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/_websocket/reader_py.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 485
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_10.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/client_exceptions.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 377
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_11.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/client_middlewares.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 55
+    },
+    {
+      "output_file": "python/aio-libs_aiohttp_12.py",
+      "original_path": "temp_repos/aiohttp/aiohttp/resolver.py",
+      "repo": "aio-libs/aiohttp",
+      "language": "python",
+      "lines": 236
+    },
+    {
+      "output_file": "python/django_django_01.py",
+      "original_path": "temp_repos/django/django/utils/inspect.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 132
+    },
+    {
+      "output_file": "python/django_django_02.py",
+      "original_path": "temp_repos/django/django/utils/deprecation.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 330
+    },
+    {
+      "output_file": "python/django_django_03.py",
+      "original_path": "temp_repos/django/django/middleware/cache.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 233
+    },
+    {
+      "output_file": "python/django_django_04.py",
+      "original_path": "temp_repos/django/django/contrib/auth/decorators.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 135
+    },
+    {
+      "output_file": "python/django_django_05.py",
+      "original_path": "temp_repos/django/django/contrib/postgres/operations.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 352
+    },
+    {
+      "output_file": "python/django_django_06.py",
+      "original_path": "temp_repos/django/django/db/backends/oracle/utils.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 99
+    },
+    {
+      "output_file": "python/django_django_07.py",
+      "original_path": "temp_repos/django/django/core/serializers/pyyaml.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 88
+    },
+    {
+      "output_file": "python/django_django_08.py",
+      "original_path": "temp_repos/django/django/templatetags/tz.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 200
+    },
+    {
+      "output_file": "python/django_django_09.py",
+      "original_path": "temp_repos/django/django/views/decorators/csrf.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 69
+    },
+    {
+      "output_file": "python/django_django_10.py",
+      "original_path": "temp_repos/django/django/contrib/staticfiles/handlers.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 115
+    },
+    {
+      "output_file": "python/django_django_11.py",
+      "original_path": "temp_repos/django/django/core/cache/backends/memcached.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 189
+    },
+    {
+      "output_file": "python/django_django_12.py",
+      "original_path": "temp_repos/django/django/db/backends/base/introspection.py",
+      "repo": "django/django",
+      "language": "python",
+      "lines": 228
+    },
+    {
+      "output_file": "javascript/axios_axios_01.js",
+      "original_path": "temp_repos/axios/lib/helpers/formDataToStream.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 112
+    },
+    {
+      "output_file": "javascript/axios_axios_02.js",
+      "original_path": "temp_repos/axios/lib/helpers/HttpStatusCode.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 77
+    },
+    {
+      "output_file": "javascript/axios_axios_03.js",
+      "original_path": "temp_repos/axios/lib/helpers/AxiosURLSearchParams.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 58
+    },
+    {
+      "output_file": "javascript/axios_axios_04.js",
+      "original_path": "temp_repos/axios/lib/defaults/index.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 161
+    },
+    {
+      "output_file": "javascript/axios_axios_05.js",
+      "original_path": "temp_repos/axios/lib/helpers/AxiosTransformStream.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 143
+    },
+    {
+      "output_file": "javascript/axios_axios_06.js",
+      "original_path": "temp_repos/axios/lib/axios.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 89
+    },
+    {
+      "output_file": "javascript/axios_axios_07.js",
+      "original_path": "temp_repos/axios/lib/helpers/validator.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 99
+    },
+    {
+      "output_file": "javascript/axios_axios_08.js",
+      "original_path": "temp_repos/axios/lib/core/Axios.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 240
+    },
+    {
+      "output_file": "javascript/axios_axios_09.js",
+      "original_path": "temp_repos/axios/lib/helpers/speedometer.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 55
+    },
+    {
+      "output_file": "javascript/axios_axios_10.js",
+      "original_path": "temp_repos/axios/lib/helpers/parseHeaders.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 55
+    },
+    {
+      "output_file": "javascript/axios_axios_11.js",
+      "original_path": "temp_repos/axios/lib/helpers/cookies.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 53
+    },
+    {
+      "output_file": "javascript/axios_axios_12.js",
+      "original_path": "temp_repos/axios/lib/helpers/fromDataURI.js",
+      "repo": "axios/axios",
+      "language": "javascript",
+      "lines": 53
+    },
+    {
+      "output_file": "javascript/expressjs_express_01.js",
+      "original_path": "temp_repos/express/lib/express.js",
+      "repo": "expressjs/express",
+      "language": "javascript",
+      "lines": 81
+    },
+    {
+      "output_file": "javascript/expressjs_express_02.js",
+      "original_path": "temp_repos/express/lib/view.js",
+      "repo": "expressjs/express",
+      "language": "javascript",
+      "lines": 205
+    },
+    {
+      "output_file": "javascript/expressjs_express_03.js",
+      "original_path": "temp_repos/express/lib/utils.js",
+      "repo": "expressjs/express",
+      "language": "javascript",
+      "lines": 271
+    },
+    {
+      "output_file": "javascript/facebook_react_01.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactStartTransition.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 202
+    },
+    {
+      "output_file": "javascript/facebook_react_02.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactSharedInternalsServer.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 68
+    },
+    {
+      "output_file": "javascript/facebook_react_03.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactServer.fb.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 76
+    },
+    {
+      "output_file": "javascript/facebook_react_04.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactAct.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 366
+    },
+    {
+      "output_file": "javascript/facebook_react_05.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactSharedInternalsClient.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 82
+    },
+    {
+      "output_file": "javascript/facebook_react_06.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactNoopUpdateQueue.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 110
+    },
+    {
+      "output_file": "javascript/facebook_react_07.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactLazy.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 255
+    },
+    {
+      "output_file": "javascript/facebook_react_08.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactServer.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 67
+    },
+    {
+      "output_file": "javascript/facebook_react_09.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactTaint.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 138
+    },
+    {
+      "output_file": "javascript/facebook_react_10.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactTransitionType.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 50
+    },
+    {
+      "output_file": "javascript/facebook_react_11.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactServer.experimental.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 87
+    },
+    {
+      "output_file": "javascript/facebook_react_12.js",
+      "original_path": "temp_repos/react/packages/react/src/ReactBaseClasses.js",
+      "repo": "facebook/react",
+      "language": "javascript",
+      "lines": 146
+    },
+    {
+      "output_file": "javascript/vercel_next.js_01.tsx",
+      "original_path": "temp_repos/next.js/packages/next/src/next-devtools/dev-overlay/components/call-stack-frame/call-stack-frame.tsx",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 148
+    },
+    {
+      "output_file": "javascript/vercel_next.js_02.ts",
+      "original_path": "temp_repos/next.js/packages/next/src/trace/upload-trace.ts",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 58
+    },
+    {
+      "output_file": "javascript/vercel_next.js_03.js",
+      "original_path": "temp_repos/next.js/packages/next/src/compiled/@babel/runtime/helpers/esm/decorate.js",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 250
+    },
+    {
+      "output_file": "javascript/vercel_next.js_04.tsx",
+      "original_path": "temp_repos/next.js/packages/next/src/next-devtools/dev-overlay/components/hydration-diff/diff-view.tsx",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 134
+    },
+    {
+      "output_file": "javascript/vercel_next.js_05.ts",
+      "original_path": "temp_repos/next.js/packages/next/src/server/lib/incremental-cache/file-system-cache.ts",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 476
+    },
+    {
+      "output_file": "javascript/vercel_next.js_06.tsx",
+      "original_path": "temp_repos/next.js/packages/next/src/client/script.tsx",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 385
+    },
+    {
+      "output_file": "javascript/vercel_next.js_07.ts",
+      "original_path": "temp_repos/next.js/packages/next/src/lib/create-client-router-filter.ts",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 74
+    },
+    {
+      "output_file": "javascript/vercel_next.js_08.ts",
+      "original_path": "temp_repos/next.js/packages/next/src/server/web/spec-extension/request.ts",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 116
+    },
+    {
+      "output_file": "javascript/vercel_next.js_09.js",
+      "original_path": "temp_repos/next.js/packages/next/src/compiled/@babel/runtime/helpers/esm/applyDecs2311.js",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 124
+    },
+    {
+      "output_file": "javascript/vercel_next.js_10.ts",
+      "original_path": "temp_repos/next.js/packages/next/src/trace/trace-uploader.ts",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 198
+    },
+    {
+      "output_file": "javascript/vercel_next.js_11.ts",
+      "original_path": "temp_repos/next.js/packages/next/src/server/web/spec-extension/adapters/headers.ts",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 231
+    },
+    {
+      "output_file": "javascript/vercel_next.js_12.ts",
+      "original_path": "temp_repos/next.js/packages/next/src/server/lib/clone-response.ts",
+      "repo": "vercel/next.js",
+      "language": "javascript",
+      "lines": 82
+    }
+  ],
+  "stats": {
+    "total_files": 84,
+    "python_files": 45,
+    "javascript_files": 39,
+    "total_repos": 8
+  }
+}

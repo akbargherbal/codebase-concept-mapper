@@ -1,0 +1,692 @@
+{
+  "model": "BAAI/bge-small-en-v1.5",
+  "overall_precision_at_5": 0.48,
+  "overall_precision_at_1": 0.35,
+  "overall_mrr": 0.5708333333333333,
+  "pass_rate": 0.45,
+  "concepts_passed": 9,
+  "total_concepts": 20,
+  "inference_time_seconds": 5.2397027015686035,
+  "per_concept": [
+    {
+      "concept": "context managers python",
+      "precision_at_5": 0.8,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 4,
+      "top_5_results": [
+        {
+          "file": "python/django_django_04.py",
+          "score": 0.7221941351890564,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_04.py",
+          "score": 0.6960129141807556,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.6642362475395203,
+          "valid": true
+        },
+        {
+          "file": "python/aio-libs_aiohttp_07.py",
+          "score": 0.6563011407852173,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_05.py",
+          "score": 0.6545342206954956,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "async await python",
+      "precision_at_5": 0.6,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 3,
+      "top_5_results": [
+        {
+          "file": "python/aio-libs_aiohttp_12.py",
+          "score": 0.6907110810279846,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_02.py",
+          "score": 0.6671348810195923,
+          "valid": true
+        },
+        {
+          "file": "python/aio-libs_aiohttp_07.py",
+          "score": 0.6547353267669678,
+          "valid": true
+        },
+        {
+          "file": "python/aio-libs_aiohttp_04.py",
+          "score": 0.6538321375846863,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_01.js",
+          "score": 0.6170903444290161,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "decorators python",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.6739744544029236,
+          "valid": false
+        },
+        {
+          "file": "python/django_django_05.py",
+          "score": 0.6426730751991272,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_04.py",
+          "score": 0.6417518258094788,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_05.py",
+          "score": 0.6356699466705322,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_04.js",
+          "score": 0.6277186274528503,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "list comprehensions python",
+      "precision_at_5": 0.6,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "valid_in_top5": 3,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_03.py",
+          "score": 0.6133884787559509,
+          "valid": false
+        },
+        {
+          "file": "python/django_django_02.py",
+          "score": 0.6064761877059937,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_05.py",
+          "score": 0.6061516404151917,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_10.py",
+          "score": 0.6015810966491699,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_01.py",
+          "score": 0.5988616347312927,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "exception handling python",
+      "precision_at_5": 0.4,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/psf_requests_03.py",
+          "score": 0.7320282459259033,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.6989572048187256,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_08.py",
+          "score": 0.6716688275337219,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_05.py",
+          "score": 0.6619235277175903,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_08.py",
+          "score": 0.6563199758529663,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "generators python",
+      "precision_at_5": 1.0,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 5,
+      "top_5_results": [
+        {
+          "file": "python/django_django_08.py",
+          "score": 0.6312258243560791,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_03.py",
+          "score": 0.6294987797737122,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_10.py",
+          "score": 0.624343991279602,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_04.py",
+          "score": 0.6184036135673523,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_05.py",
+          "score": 0.6178669929504395,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "class inheritance python",
+      "precision_at_5": 0.8,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 4,
+      "top_5_results": [
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.6995587348937988,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_08.py",
+          "score": 0.6868298649787903,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_04.py",
+          "score": 0.6575732827186584,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_12.py",
+          "score": 0.6489887833595276,
+          "valid": true
+        },
+        {
+          "file": "python/aio-libs_aiohttp_05.py",
+          "score": 0.626796305179596,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "file handling python",
+      "precision_at_5": 0.8,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 4,
+      "top_5_results": [
+        {
+          "file": "python/django_django_11.py",
+          "score": 0.6946690678596497,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_06.py",
+          "score": 0.6867800354957581,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_01.py",
+          "score": 0.6475180983543396,
+          "valid": true
+        },
+        {
+          "file": "python/psf_requests_01.py",
+          "score": 0.6409192681312561,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_02.py",
+          "score": 0.6405629515647888,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "lambda functions python",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "python/aio-libs_aiohttp_04.py",
+          "score": 0.6353381872177124,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_05.py",
+          "score": 0.6249294877052307,
+          "valid": false
+        },
+        {
+          "file": "python/django_django_10.py",
+          "score": 0.6194061040878296,
+          "valid": true
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.6177592873573303,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_03.py",
+          "score": 0.6177116632461548,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "dataclasses python",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.25,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "python/pallets_flask_12.py",
+          "score": 0.6853171586990356,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.682928740978241,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_02.py",
+          "score": 0.6717194318771362,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_05.py",
+          "score": 0.6691932678222656,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_05.py",
+          "score": 0.6657622456550598,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "promises javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_03.js",
+          "score": 0.6662521362304688,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_01.js",
+          "score": 0.6556660532951355,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_11.ts",
+          "score": 0.6400600671768188,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_06.js",
+          "score": 0.6351763606071472,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_11.js",
+          "score": 0.6328024864196777,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "async await javascript",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.25,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "python/aio-libs_aiohttp_02.py",
+          "score": 0.6542688012123108,
+          "valid": false
+        },
+        {
+          "file": "python/aio-libs_aiohttp_12.py",
+          "score": 0.6535006761550903,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_03.js",
+          "score": 0.6457593441009521,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_01.js",
+          "score": 0.6455481648445129,
+          "valid": true
+        },
+        {
+          "file": "javascript/vercel_next.js_07.js",
+          "score": 0.6295701265335083,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "react hooks",
+      "precision_at_5": 0.8,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 4,
+      "top_5_results": [
+        {
+          "file": "javascript/facebook_react_11.js",
+          "score": 0.7650259733200073,
+          "valid": true
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.7630649209022522,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_04.js",
+          "score": 0.759518027305603,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_10.js",
+          "score": 0.7594351172447205,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_06.js",
+          "score": 0.757500171661377,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "closures javascript",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.25,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.6588738560676575,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.6538771390914917,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_03.js",
+          "score": 0.6522402763366699,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_11.js",
+          "score": 0.648470938205719,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_10.js",
+          "score": 0.634824275970459,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "arrow functions javascript",
+      "precision_at_5": 0.8,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 4,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.6268875598907471,
+          "valid": true
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.6149439215660095,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_10.py",
+          "score": 0.6099870800971985,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_03.js",
+          "score": 0.597693681716919,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_11.js",
+          "score": 0.5947573781013489,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "destructuring javascript",
+      "precision_at_5": 0.2,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 1,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_04.js",
+          "score": 0.6725775599479675,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_12.js",
+          "score": 0.6460968255996704,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_11.js",
+          "score": 0.6381409764289856,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.6355478167533875,
+          "valid": false
+        },
+        {
+          "file": "javascript/facebook_react_01.js",
+          "score": 0.6275618076324463,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "event handling javascript",
+      "precision_at_5": 0.4,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.5,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_01.js",
+          "score": 0.6279724836349487,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_03.js",
+          "score": 0.6268143057823181,
+          "valid": true
+        },
+        {
+          "file": "javascript/vercel_next.js_07.js",
+          "score": 0.6176066994667053,
+          "valid": false
+        },
+        {
+          "file": "javascript/vercel_next.js_03.tsx",
+          "score": 0.6168217658996582,
+          "valid": true
+        },
+        {
+          "file": "javascript/facebook_react_03.js",
+          "score": 0.6130316853523254,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "callbacks javascript",
+      "precision_at_5": 1.0,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 5,
+      "top_5_results": [
+        {
+          "file": "javascript/vercel_next.js_07.js",
+          "score": 0.6641140580177307,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_11.js",
+          "score": 0.640217125415802,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_03.js",
+          "score": 0.6394318342208862,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.6391032934188843,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_01.js",
+          "score": 0.6312259435653687,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "concept": "array methods javascript",
+      "precision_at_5": 0.0,
+      "precision_at_1": 0.0,
+      "reciprocal_rank": 0.0,
+      "valid_in_top5": 0,
+      "top_5_results": [
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.665844738483429,
+          "valid": false
+        },
+        {
+          "file": "python/psf_requests_03.py",
+          "score": 0.6103042364120483,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.6021637916564941,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_09.js",
+          "score": 0.5968273282051086,
+          "valid": false
+        },
+        {
+          "file": "javascript/expressjs_express_02.js",
+          "score": 0.5962608456611633,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "concept": "classes javascript",
+      "precision_at_5": 0.4,
+      "precision_at_1": 1.0,
+      "reciprocal_rank": 1.0,
+      "valid_in_top5": 2,
+      "top_5_results": [
+        {
+          "file": "python/pallets_flask_03.py",
+          "score": 0.6682735085487366,
+          "valid": true
+        },
+        {
+          "file": "python/django_django_08.py",
+          "score": 0.6399011611938477,
+          "valid": false
+        },
+        {
+          "file": "python/pallets_flask_12.py",
+          "score": 0.6352075934410095,
+          "valid": false
+        },
+        {
+          "file": "javascript/axios_axios_11.js",
+          "score": 0.6314811706542969,
+          "valid": true
+        },
+        {
+          "file": "javascript/axios_axios_07.js",
+          "score": 0.6283311247825623,
+          "valid": false
+        }
+      ]
+    }
+  ]
+}
