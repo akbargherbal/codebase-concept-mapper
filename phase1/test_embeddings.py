@@ -5,10 +5,12 @@ Tests multiple embedding models on NL->Code mapping task with GPU acceleration
 
 import json
 import time
+import gc
 from pathlib import Path
 from typing import Dict, List, Tuple
 import numpy as np
 import torch
+from sentence_transformers import SentenceTransformer
 from concept_validators import ALL_VALIDATORS, validate_file_for_concept
 
 
@@ -103,8 +105,8 @@ class ColabEmbeddingTester:
         content_list = [self.test_files[f]["content"] for f in file_list]
 
         try:
-            # Larger batch size for GPU
-            batch_size = 32 if self.device == "cuda" else 8
+            # FIXED: Reduced batch size to prevent OOM
+            batch_size = 8 if self.device == "cuda" else 8
 
             embeddings = model.encode(
                 content_list,
@@ -328,12 +330,48 @@ class ColabEmbeddingTester:
         print(f"\n💾 Results saved to {output_path}")
 
 
+def setup_hf_auth():
+    """Setup HuggingFace authentication for gated models"""
+    try:
+        # Try Colab secrets first
+        from google.colab import userdata
+        from huggingface_hub import login
+
+        hf_token = userdata.get("HF_TOKEN")
+        if hf_token:
+            login(token=hf_token)
+            print("✓ Authenticated with HuggingFace")
+            return True
+        else:
+            print("⚠️ No HF_TOKEN in Colab secrets")
+            print("   Some gated models (embeddinggemma-300m) will fail")
+            print("   Add token via left sidebar → 🔑 Secrets")
+            return False
+    except ImportError:
+        # Not in Colab
+        try:
+            from huggingface_hub import login
+
+            login()  # Will use cached token or prompt
+            print("✓ Authenticated with HuggingFace")
+            return True
+        except Exception as e:
+            print(f"⚠️ HuggingFace auth failed: {e}")
+            print("   Some gated models may fail")
+            return False
+    except Exception as e:
+        print(f"⚠️ HuggingFace auth failed: {e}")
+        return False
+
+
 def main():
     """
     Main testing workflow optimized for Colab
     Usage: python test_embeddings.py
     """
-    from sentence_transformers import SentenceTransformer
+    # Setup authentication first
+    print("\n🔐 Setting up authentication...")
+    setup_hf_auth()
 
     # Initialize tester
     tester = ColabEmbeddingTester()
@@ -346,10 +384,10 @@ def main():
 
     print(f"\n✓ Ready to test on {file_count} files and {len(ALL_VALIDATORS)} concepts")
 
-    # UPDATED MODELS (2025 code-optimized)
+    # FIXED: Updated model names and order
     models_to_test = [
         "Qwen/Qwen3-Embedding-0.6B",
-        "multilingual-e5-large-instruct",
+        "intfloat/multilingual-e5-large-instruct",  # FIXED: added intfloat/ prefix
         "google/embeddinggemma-300m",
         "Alibaba-NLP/gte-multilingual-base",
     ]
@@ -362,13 +400,25 @@ def main():
         print("#" * 60)
 
         try:
-            # Load model with trust_remote_code for nomic/qwen
+            # FIXED: Add model-specific loading kwargs
+            model_kwargs = {"device": tester.device}
+
+            # FIXED: Add trust_remote_code for Alibaba/gte models
+            if "Alibaba-NLP" in model_name or "gte-multilingual" in model_name:
+                model_kwargs["trust_remote_code"] = True
+                print("  → Using trust_remote_code=True")
+
+            # FIXED: Add trust_remote_code for nomic/qwen models
             if "nomic" in model_name.lower() or "qwen" in model_name.lower():
-                model = SentenceTransformer(
-                    model_name, trust_remote_code=True, device=tester.device
-                )
-            else:
-                model = SentenceTransformer(model_name, device=tester.device)
+                model_kwargs["trust_remote_code"] = True
+                print("  → Using trust_remote_code=True")
+
+            # Optional: Use fp16 for memory efficiency on GPU
+            if tester.device == "cuda":
+                model_kwargs["model_kwargs"] = {"torch_dtype": torch.float16}
+                print("  → Using torch.float16 for memory efficiency")
+
+            model = SentenceTransformer(model_name, **model_kwargs)
 
             results = tester.test_model(model_name, model)
             all_results.append(results)
@@ -381,6 +431,7 @@ def main():
             del model
             if tester.device == "cuda":
                 torch.cuda.empty_cache()
+            gc.collect()
 
         except Exception as e:
             print(f"❌ Failed to test {model_name}: {e}")
