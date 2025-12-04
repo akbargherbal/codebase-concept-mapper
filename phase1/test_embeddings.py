@@ -20,7 +20,7 @@ class ColabEmbeddingTester:
         self.test_files = {}
         self.results = {}
         self.device = self._setup_device()
-        
+
     def _setup_device(self):
         """Detect and setup GPU if available"""
         if torch.cuda.is_available():
@@ -28,13 +28,13 @@ class ColabEmbeddingTester:
             gpu_name = torch.cuda.get_device_name(0)
             gpu_memory = torch.cuda.get_device_properties(0).total_memory / 1e9
             print(f"✓ GPU detected: {gpu_name} ({gpu_memory:.1f} GB)")
-            
+
             # Clear cache
             torch.cuda.empty_cache()
         else:
             device = "cpu"
             print("⚠️  No GPU detected. Using CPU (will be slower)")
-        
+
         return device
 
     def load_test_files(self):
@@ -105,24 +105,24 @@ class ColabEmbeddingTester:
         try:
             # Larger batch size for GPU
             batch_size = 32 if self.device == "cuda" else 8
-            
+
             embeddings = model.encode(
-                content_list, 
-                show_progress_bar=True, 
+                content_list,
+                show_progress_bar=True,
                 batch_size=batch_size,
                 device=self.device,
-                convert_to_numpy=True  # Ensure numpy output
+                convert_to_numpy=True,  # Ensure numpy output
             )
-            
+
             for filepath, embedding in zip(file_list, embeddings):
                 file_embeddings[filepath] = embedding
-            
+
             print(f"  ✓ Embedded {len(file_embeddings)} files")
-            
+
             # Free GPU memory
             if self.device == "cuda":
                 torch.cuda.empty_cache()
-                
+
         except Exception as e:
             print(f"  ✗ Error embedding files: {e}")
             return {"error": str(e)}
@@ -152,9 +152,7 @@ class ColabEmbeddingTester:
                     query_text = concept_name
 
                 query_embedding = model.encode(
-                    query_text, 
-                    device=self.device,
-                    convert_to_numpy=True
+                    query_text, device=self.device, convert_to_numpy=True
                 )
             except Exception as e:
                 print(f"  ✗ Error embedding query '{concept_name}': {e}")
@@ -273,8 +271,12 @@ class ColabEmbeddingTester:
 
         # Create markdown table
         table = "\n## Model Comparison\n\n"
-        table += "| Model | P@5 | P@1 | MRR | Pass Rate | Time (s) | Device | Decision |\n"
-        table += "|-------|-----|-----|-----|-----------|----------|--------|----------|\n"
+        table += (
+            "| Model | P@5 | P@1 | MRR | Pass Rate | Time (s) | Device | Decision |\n"
+        )
+        table += (
+            "|-------|-----|-----|-----|-----------|----------|--------|----------|\n"
+        )
 
         for result in valid_results:
             p5 = result["overall_precision_at_5"]
@@ -346,14 +348,10 @@ def main():
 
     # UPDATED MODELS (2025 code-optimized)
     models_to_test = [
-        # Code-specialized (recommended for this task)
-        "nomic-ai/nomic-embed-code",  # Top performer for code
-        
-        # Qwen3 series (strong multi-language support, includes code)
-        "Qwen/Qwen3-Embedding-0.6B",  # Fastest, lightweight
-        
-        # BGE series (general but good baseline)
-        "BAAI/bge-small-en-v1.5",  # Fast CPU baseline
+        "Qwen/Qwen3-Embedding-0.6B",
+        "multilingual-e5-large-instruct",
+        "google/embeddinggemma-300m",
+        "Alibaba-NLP/gte-multilingual-base",
     ]
 
     all_results = []
@@ -367,15 +365,10 @@ def main():
             # Load model with trust_remote_code for nomic/qwen
             if "nomic" in model_name.lower() or "qwen" in model_name.lower():
                 model = SentenceTransformer(
-                    model_name, 
-                    trust_remote_code=True,
-                    device=tester.device
+                    model_name, trust_remote_code=True, device=tester.device
                 )
             else:
-                model = SentenceTransformer(
-                    model_name,
-                    device=tester.device
-                )
+                model = SentenceTransformer(model_name, device=tester.device)
 
             results = tester.test_model(model_name, model)
             all_results.append(results)
@@ -383,7 +376,7 @@ def main():
             # Save individual results
             safe_name = model_name.replace("/", "_")
             tester.save_results(results, f"results_{safe_name}.json")
-            
+
             # Clear memory
             del model
             if tester.device == "cuda":
@@ -392,6 +385,7 @@ def main():
         except Exception as e:
             print(f"❌ Failed to test {model_name}: {e}")
             import traceback
+
             traceback.print_exc()
             all_results.append({"model": model_name, "error": str(e)})
             continue
