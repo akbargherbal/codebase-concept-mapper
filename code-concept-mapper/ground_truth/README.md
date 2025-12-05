@@ -1,224 +1,187 @@
-# Ground Truth System
+# Ground Truth Concept Mapper
 
-This directory contains tools for creating and managing ground truth data for concept-to-code mappings. The ground truth data is used to validate and benchmark the RAG system's accuracy.
+A robust, AST-based CLI tool for systematically mapping abstract programming concepts to concrete code implementations.
 
-## Overview
+This tool is designed to create high-quality, structured ground-truth datasets, perfect for machine learning, code analysis, and educational projects. It is built to be driven by an AI agent or used manually, with safety features like automatic backups and atomic writes to ensure data integrity.
 
-The ground truth system uses an **AST-based CLI tool** to systematically map programming concepts (like "Context Managers" or "Decorators") to their actual implementations in open-source codebases.
+---
 
-### Why Ground Truth?
+## 🚀 Features
 
-- **Validation**: Measure system accuracy (Precision@5, Recall, etc.)
-- **Benchmarking**: Compare different retrieval approaches
-- **Training Data**: Potentially fine-tune models or improve ranking
-- **Quality Assurance**: Ensure mapped examples are truly representative
+- **AST-Based Precision:** Uses Python's Abstract Syntax Tree (`ast`) module to find the precise start and end lines of classes and functions, eliminating manual guesswork.
+- **Taxonomy-Driven:** The workflow is controlled by user-defined JSON "taxonomy" files, ensuring consistency and repeatability across different codebases and audit sessions.
+- **Data Integrity:**
+  - **Atomic Writes:** Uses a temp-file-and-rename strategy to prevent the state file from becoming corrupted during saves.
+  - **Automatic Backups:** Creates a timestamped backup of the state file before every change and automatically rotates the last 5 backups.
+  - **Duplicate Detection:** Prevents the same code implementation from being mapped to a concept more than once.
+- **Rich Metadata:** The output file is enriched with metadata from the taxonomy, such as keywords, languages, and categories, creating a powerful dataset for downstream analysis.
+- **AI-Ready:** Designed with a simple, strict command set that is ideal for being driven by an LLM-based AI agent.
 
-## Directory Structure
+---
 
-```
-ground_truth/
-├── README.md              # This file
-├── tools/                 # CLI tools for mapping
-│   ├── cli.py            # Main CLI entry point
-│   ├── concept_mapper.py # Core mapping logic
-│   └── validator.py      # State validation
-├── tests/                # Unit tests
-│   └── test_concept_mapper.py
-├── data/                 # Generated state files
-│   └── concepts_map.json
-└── personas/             # AI agent instructions
-    └── GEMINI.md         # System prompt for LLM agents
-```
+## ⚙️ Prerequisites
 
-## Quick Start
+- Python 3.8+ (required for `end_lineno` support in the `ast` module).
 
-### 1. Initialize a Project
+---
 
-```bash
-# From project root
-python -m ground_truth.tools.cli init "flask"
-```
+## workflow
 
-This creates `concepts_map.json` in the current directory with project metadata.
+Using the `concept_mapper` follows a strict, four-step process that ensures consistency and data quality.
 
-### 2. Define Concepts
+### Step 1: Author a Concept Taxonomy
+
+Before you begin, you must define the concepts you want to map. Create a JSON file (e.g., `python_core.json`) that follows the schema defined in the [Input Taxonomy Format](#input-taxonomy-format) section below.
+
+This file is your single source of truth for what the agent will search for.
+
+### Step 2: Initialize the Project
+
+Navigate to your project root and run the `init` command. This creates the main state file (`ground_truth/data/concepts_map.json`) where all mappings will be stored.
 
 ```bash
-python -m ground_truth.tools.cli define "Context Managers" \
-  --desc "Classes implementing __enter__ and __exit__ methods"
+concept_mapper init "flask-audit"
 ```
 
-### 3. Map Implementations
+### Step 3: Load the Concept Taxonomy
 
-Using **identifier** (preferred - AST-based):
+Next, load the concepts from your JSON file into the state. This is a mandatory step before you can begin mapping.
 
 ```bash
-python -m ground_truth.tools.cli add "Context Managers" \
-  --file "corpus/flask/src/werkzeug/local.py" \
-  --identifier "LocalProxy" \
-  --confidence "high" \
-  --type "class_implementation" \
-  --evidence "Defines __enter__ and __exit__ for context management"
+concept_mapper load-concepts config/taxonomies/python_core.json
 ```
 
-Using **line ranges** (fallback):
+The tool will read your file, validate it, and populate the state with the concepts you've defined.
+
+### Step 4: Map Implementations
+
+This is the core task. Use the `add` command to link a specific piece of code to a concept you loaded in the previous step.
 
 ```bash
-python -m ground_truth.tools.cli add "Context Managers" \
-  --file "corpus/flask/src/werkzeug/local.py" \
-  --lines "45-62" \
-  --confidence "medium" \
-  --type "class_implementation" \
-  --evidence "Manual line range for LocalProxy class"
+concept_mapper add "Decorators" \
+    --file "corpus/flask/src/flask/app.py" \
+    --identifier "route" \
+    --confidence "high" \
+    --type "decorator_factory" \
+    --evidence "Function is used with @app.route() syntax."
 ```
 
-### 4. Check Status
+### Step 5: Check Progress
+
+At any time, use the `status` command to see a summary of which concepts are loaded and how many implementations have been mapped for each.
 
 ```bash
-python -m ground_truth.tools.cli status
+concept_mapper status
 ```
 
-Output:
-```
-📊 Project: flask
-   Last Updated: 2025-12-05T10:30:00
-----------------------------------------
-   • Context Managers      [3]
-   • Decorators           [5]
-   • Async/Await          [2]
-----------------------------------------
-```
+---
 
-## CLI Commands
+## 📖 Command Reference
 
-### `init`
+#### `init`
 
-Initialize a new concept map for a project.
+Initializes a new project state file.
 
 ```bash
-python -m ground_truth.tools.cli init PROJECT_NAME [--force]
+concept_mapper init <PROJECT_NAME> [--force]
 ```
 
-- `--force`: Overwrite existing state file
+- `<PROJECT_NAME>`: The name of the project being audited (e.g., "flask").
+- `--force`: (Optional) Overwrite an existing state file.
 
-### `define`
+#### `load-concepts`
 
-Define or update a concept.
+Loads concept definitions from a user-provided JSON taxonomy file.
 
 ```bash
-python -m ground_truth.tools.cli define CONCEPT_NAME --desc DESCRIPTION [--update]
+concept_mapper load-concepts <PATH_TO_TAXONOMY_JSON>
 ```
 
-- `--desc`: Brief description of the concept (required)
-- `--update`: Allow updating existing concept definition
+- `<PATH_TO_TAXONOMY_JSON>`: The relative or absolute path to your concepts file.
 
-### `add`
+#### `add`
 
-Map a concept to a code implementation.
+Maps a code implementation to a pre-loaded concept.
 
 ```bash
-python -m ground_truth.tools.cli add CONCEPT_NAME \
-  --file FILE_PATH \
-  [--identifier CLASS_OR_FUNC] \
-  [--lines START-END] \
-  --confidence {high|medium|low} \
-  --type PATTERN_TYPE \
-  --evidence JUSTIFICATION
+concept_mapper add <CONCEPT_NAME> --file <FILE_PATH> [options]
 ```
 
-**Required:**
-- `--file`: Path to file containing implementation
-- `--confidence`: Confidence level (high/medium/low)
-- `--type`: Implementation pattern type
-- `--evidence`: Specific justification for mapping
+- `<CONCEPT_NAME>`: The name of the concept (must match a name from the loaded taxonomy).
+- `--file <FILE_PATH>`: **(Required)** The path to the source code file.
+- `--identifier <NAME>`: The name of the class or function. **This is the preferred method.**
+- `--lines <START-END>`: A manual line range (e.g., "45-62"). Use only as a fallback if `--identifier` fails.
+- `--confidence <LEVEL>`: **(Required)** Confidence level: `high`, `medium`, or `low`.
+- `--type <TYPE>`: **(Required)** A category for the implementation pattern (e.g., "class_definition", "function_decorator").
+- `--evidence <TEXT>`: **(Required)** A brief, factual justification for the mapping.
 
-**One of:**
-- `--identifier`: Class/function name (preferred - uses AST)
-- `--lines`: Manual line range "START-END" (fallback)
+#### `status`
 
-### `status`
-
-Display summary of current concept map.
+Displays a summary of the current project state.
 
 ```bash
-python -m ground_truth.tools.cli status
+concept_mapper status
 ```
 
-## Features
+---
 
-### ✅ AST-Based Precision
+## 📥 Input Taxonomy Format
 
-The tool uses Python's `ast` module to automatically locate class and function definitions:
+Your concept taxonomy files must be a JSON object with the following structure.
 
-```python
-# You provide identifier
---identifier "ContextManager"
-
-# Tool finds exact lines
-Lines 45-62 (includes decorators, docstrings, full body)
+```json
+{
+  "version": "1.0",
+  "taxonomy_name": "Python Core Concepts",
+  "concepts": [
+    {
+      "name": "Context Managers",
+      "description": "Classes implementing __enter__ and __exit__ for resource management.",
+      "keywords": ["__enter__", "__exit__", "with"],
+      "languages": ["python"],
+      "category": "language_feature"
+    }
+  ]
+}
 ```
 
-### ✅ Duplicate Detection
+- `name` (string, **required**): The official display name of the concept.
+- `description` (string, **required**): A clear explanation of the concept.
+- `keywords` (list of strings, _optional_): Search terms associated with the concept.
+- `languages` (list of strings, _optional_): Applicable programming languages.
+- `category` (string, _optional_): A grouping category (e.g., "web_framework").
 
-Prevents mapping the same code location multiple times:
+---
 
-```
-⚠️  Duplicate detected at file.py:45
-   Already mapped to concept 'Context Managers'. Skipping.
-```
+## 📤 Output State File Format
 
-### ✅ Automatic Backups
-
-Creates timestamped backups before each state change:
-
-```
-.mapper_backups/
-├── concepts_map_20250105_103000.json
-├── concepts_map_20250105_104500.json
-└── concepts_map_20250105_110000.json
-```
-
-Keeps last 5 backups automatically.
-
-### ✅ Atomic Writes
-
-Uses temp file + atomic rename to prevent corruption:
-
-```python
-# Write to temp file
-concepts_map.json.tmp
-
-# Atomic replace
-os.replace(temp, state_file)
-```
-
-### ✅ Schema Validation
-
-Validates state file structure on every load:
+The tool generates a `concepts_map.json` file that stores all the collected data in a structured format.
 
 ```json
 {
   "metadata": {
-    "project": "flask",
-    "created_at": "2025-12-05T10:00:00",
-    "last_updated": "2025-12-05T10:30:00",
-    "version": "1.1"
+    "project": "flask-audit",
+    "version": "1.1",
+    "last_updated": "..."
   },
   "concepts": {
     "context_managers": {
       "display_name": "Context Managers",
-      "definition": "Classes implementing __enter__ and __exit__",
+      "definition": "Classes implementing __enter__ and __exit__...",
+      "keywords": ["__enter__", "__exit__", "with"],
+      "languages": ["python"],
+      "category": "language_feature",
       "implementations": [
         {
           "file_path": "corpus/flask/src/werkzeug/local.py",
           "identifier": "LocalProxy",
           "line_start": 45,
           "line_end": 62,
-          "code_snippet": "class LocalProxy:\n    def __enter__(self)...",
+          "code_snippet": "class LocalProxy:\\n...",
           "confidence": "high",
           "pattern_type": "class_implementation",
-          "evidence": "Defines __enter__ and __exit__",
-          "added_at": "2025-12-05T10:15:00"
+          "evidence": "Defines __enter__ and __exit__ methods.",
+          "added_at": "..."
         }
       ]
     }
@@ -226,132 +189,20 @@ Validates state file structure on every load:
 }
 ```
 
-## Best Practices
+---
 
-### 1. Always Use Identifiers First
+## ✅ Best Practices
 
-```bash
-# ✅ GOOD: AST finds exact lines
---identifier "ClassName"
+1.  **Always Prefer `--identifier`**: The AST-based lookup is far more accurate and reliable than manually specifying line numbers.
+2.  **Write Factual Evidence**: Evidence should be based on observable code features (e.g., "Implements the `__iter__` method"), not subjective opinions (e.g., "Looks like an iterator").
+3.  **Verify Before You Map**: Use `cat` or `grep` to read the source code and confirm that a candidate is a true implementation of a concept before running the `add` command.
 
-# ❌ BAD: Manual counting prone to errors
---lines "45-62"
-```
+---
 
-### 2. Write Specific Evidence
+## 🧪 Testing
 
-```bash
-# ✅ GOOD: Observable code features
---evidence "Class defines __enter__ and __exit__ methods"
-
-# ❌ BAD: Vague statements
---evidence "Looks like a context manager"
-```
-
-### 3. Verify Before Mapping
+To run the built-in test suite, navigate to the project root and execute `pytest`.
 
 ```bash
-# 1. Find candidates
-grep -rn "class.*__enter__" corpus/flask/
-
-# 2. Read the file
-cat corpus/flask/src/werkzeug/local.py
-
-# 3. Confirm it's a definition (not usage)
-# 4. Then map it
+pytest --cov=src --cov=ground_truth/tools -v
 ```
-
-### 4. Use Appropriate Confidence Levels
-
-- **High**: Standard implementation, clear pattern, no ambiguity
-- **Medium**: Complex logic, multiple responsibilities, non-standard approach
-- **Low**: Ambiguous, partial implementation, requires human review
-
-## Workflow for AI Agents
-
-See `personas/GEMINI.md` for complete system prompt. Key points:
-
-1. **Never edit JSON directly** - always use CLI
-2. **Prefer --identifier over --lines** - AST is more accurate
-3. **Verify file contents first** - never guess
-4. **Check for duplicates** - tool prevents but good to know
-5. **Use proper shell escaping** - single quotes for strings with spaces
-
-## Testing
-
-Run unit tests:
-
-```bash
-cd ground_truth
-python -m pytest tests/ -v
-```
-
-Or:
-
-```bash
-python -m unittest discover -s ground_truth/tests -p "test_*.py"
-```
-
-## Integration with Main System
-
-Ground truth data feeds into:
-
-1. **Accuracy Evaluation** (`scripts/evaluate_accuracy.py`)
-   - Compares RAG results against ground truth
-   - Calculates Precision@K, Recall, F1
-
-2. **Validation** (`phase1_validation/validators/`)
-   - Uses concept definitions to validate retrievals
-   - Keyword-based post-filtering
-
-3. **Ranking** (`src/business_logic/rankers.py`)
-   - Ground truth examples inform quality scoring
-   - Can weight by confidence levels
-
-## Recovery from Corruption
-
-If `concepts_map.json` becomes corrupted:
-
-```bash
-# Option 1: Restore from backup
-cp .mapper_backups/concepts_map_20250105_110000.json concepts_map.json
-
-# Option 2: Fix manually (for JSON syntax errors)
-# Edit concepts_map.json to fix the JSON
-
-# Option 3: Start fresh (LAST RESORT)
-rm concepts_map.json
-python -m ground_truth.tools.cli init "project_name"
-```
-
-## FAQ
-
-**Q: Can I edit concepts_map.json directly?**
-A: No! Always use the CLI. Direct edits bypass validation and backups.
-
-**Q: What if AST can't find my identifier?**
-A: Use `grep -n "def name" file.py` to find lines, then use `--lines START-END`.
-
-**Q: Can I map the same concept to multiple files?**
-A: Yes! That's the goal. Map each unique implementation separately.
-
-**Q: What's the difference between identifier and lines?**
-A: `--identifier` uses AST for precision. `--lines` is manual fallback.
-
-**Q: How do I delete a mapping?**
-A: Currently not supported via CLI. Restore from backup or start fresh.
-
-## Future Enhancements
-
-- [ ] `remove` command to delete specific mappings
-- [ ] `update` command to modify existing mappings
-- [ ] `export` command to generate training data formats
-- [ ] `validate` command to check all file paths still exist
-- [ ] `merge` command to combine multiple concept maps
-- [ ] Support for JavaScript/TypeScript AST parsing
-
-## Related Documentation
-
-- `personas/GEMINI.md` - AI agent system prompt
-- `tests/test_concept_mapper.py` - Usage examples in tests
-- `../docs/NEW_CONTEXT.md` - Project overview and goals
