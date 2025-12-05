@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "taxonomy_name": "Python Core Concepts",
+  "concepts": [
+    {
+      "name": "Context Managers",
+      "description": "Classes implementing __enter__ and __exit__ for resource management, typically used with a 'with' statement.",
+      "keywords": ["__enter__", "__exit__", "contextmanager", "with"],
+      "languages": ["python"],
+      "category": "language_feature"
+    },
+    {
+      "name": "Decorators",
+      "description": "Functions that modify or enhance other functions or methods, using the '@' syntax.",
+      "keywords": ["@", "functools.wraps", "wrapper"],
+      "languages": ["python"],
+      "category": "language_feature"
+    },
+    {
+      "name": "Generators",
+      "description": "Functions that use the 'yield' keyword to produce a sequence of values lazily.",
+      "keywords": ["yield", "yield from", "generator"],
+      "languages": ["python"],
+      "category": "language_feature"
+    }
+  ]
+}

@@ -21,10 +21,11 @@ def main():
     p_init.add_argument("project_name", help="Name of the project being audited.")
     p_init.add_argument("--force", action="store_true", help="Overwrite existing state file.")
 
-    p_def = subparsers.add_parser("define", help="Define or update a concept.")
-    p_def.add_argument("name", help="Display name of the concept (e.g., 'Context Managers').")
-    p_def.add_argument("--desc", required=True, help="A brief description of the concept.")
-    p_def.add_argument("--update", action="store_true", help="DEPRECATED: Definition is now always updated.")
+    # --- NEW: load-concepts command ---
+    p_load = subparsers.add_parser("load-concepts", help="Load concept definitions from a JSON taxonomy file.")
+    p_load.add_argument("concepts_file", help="Path to the concepts taxonomy JSON file.")
+
+    # --- 'define' command has been REMOVED ---
 
     p_add = subparsers.add_parser("add", help="Map a concept to a code implementation.")
     p_add.add_argument("concept", help="The concept name to map.")
@@ -46,8 +47,8 @@ def main():
 
     if args.command == "init":
         service.init_project(args.project_name, args.force)
-    elif args.command == "define":
-        service.define_concept(args.name, args.desc)
+    elif args.command == "load-concepts":
+        service.load_concepts_from_file(args.concepts_file)
     elif args.command == "add":
         service.add_mapping(
             args.concept, args.file, args.identifier, args.lines,

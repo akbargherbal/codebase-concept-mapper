@@ -1,4 +1,5 @@
 import pytest
+import json
 from unittest.mock import MagicMock, patch
 from src.business_logic.concept_mapping_service import ConceptMappingService, normalize_key
 from src.domain.models import ConceptMap, Metadata, Concept, Implementation
@@ -26,6 +27,78 @@ def empty_state():
         metadata=Metadata(project="test", version="1.0"),
         concepts={}
     )
+
+# --- NEW TESTS FOR load_concepts_from_file ---
+
+def test_load_concepts_from_file_success(tmp_path, mock_state_manager, empty_state):
+    """Test loading concepts from a valid JSON file into an empty state."""
+    service = ConceptMappingService(mock_state_manager)
+    mock_state_manager.load_state.return_value = empty_state
+    mock_state_manager.save_state.return_value = True
+    
+    concepts_file = tmp_path / "concepts.json"
+    concepts_file.write_text(json.dumps({
+        "concepts": [
+            {"name": "Context Managers", "description": "...", "keywords": ["with"], "category": "lang"},
+            {"name": "Decorators", "description": "...", "languages": ["python"]}
+        ]
+    }))
+    
+    result = service.load_concepts_from_file(str(concepts_file))
+    
+    assert result is True
+    mock_state_manager.save_state.assert_called_once()
+    saved_state = mock_state_manager.save_state.call_args[0][0]
+    
+    assert len(saved_state.concepts) == 2
+    assert "context_managers" in saved_state.concepts
+    assert saved_state.concepts["context_managers"].keywords == ["with"]
+    assert saved_state.concepts["decorators"].languages == ["python"]
+
+def test_load_concepts_duplicate_skipping(tmp_path, mock_state_manager, populated_state, capsys):
+    """Test that load-concepts skips concepts that already exist."""
+    service = ConceptMappingService(mock_state_manager)
+    mock_state_manager.load_state.return_value = populated_state  # Already has "Decorators"
+    mock_state_manager.save_state.return_value = True
+    
+    concepts_file = tmp_path / "concepts.json"
+    concepts_file.write_text(json.dumps({
+        "concepts": [
+            {"name": "Decorators", "description": "New description"},
+            {"name": "Context Managers", "description": "New concept"}
+        ]
+    }))
+    
+    service.load_concepts_from_file(str(concepts_file))
+    
+    saved_state = mock_state_manager.save_state.call_args[0][0]
+    assert len(saved_state.concepts) == 2
+    assert saved_state.concepts['decorators'].definition == "..."  # Original definition is preserved
+    
+    captured = capsys.readouterr()
+    assert "Skipped 1 duplicates" in captured.out
+
+def test_load_concepts_file_not_found(mock_state_manager, capsys):
+    """Test that an error is printed if the concepts file does not exist."""
+    service = ConceptMappingService(mock_state_manager)
+    service.load_concepts_from_file("non_existent_file.json")
+    captured = capsys.readouterr()
+    assert "Concepts file not found" in captured.err
+
+def test_load_concepts_invalid_json(tmp_path, mock_state_manager, empty_state, capsys):
+    """Test loading a file with invalid JSON."""
+    service = ConceptMappingService(mock_state_manager)
+    mock_state_manager.load_state.return_value = empty_state
+    
+    concepts_file = tmp_path / "concepts.json"
+    concepts_file.write_text("{'invalid': 'json'}")
+    
+    service.load_concepts_from_file(str(concepts_file))
+    captured = capsys.readouterr()
+    assert "Invalid JSON" in captured.err
+
+# --- END NEW TESTS ---
+
 
 # CORRECTED TEST
 @patch('src.business_logic.concept_mapping_service.extract_snippet', return_value="dummy snippet")
@@ -100,28 +173,7 @@ def test_init_project_already_exists(mock_state_manager, capsys):
     assert "already exists" in captured.out
     mock_state_manager.save_state.assert_not_called()
 
-def test_define_concept_no_state_file(mock_state_manager, capsys):
-    """Test define_concept when no state file is found."""
-    service = ConceptMappingService(mock_state_manager)
-    mock_state_manager.load_state.return_value = None
-
-    service.define_concept("New Concept", "A description")
-
-    captured = capsys.readouterr()
-    assert "No state file found" in captured.err
-    mock_state_manager.save_state.assert_not_called()
-
-def test_define_concept_update_existing(mock_state_manager, populated_state):
-    """Test that define_concept updates the definition of an existing concept."""
-    service = ConceptMappingService(mock_state_manager)
-    mock_state_manager.load_state.return_value = populated_state
-
-    service.define_concept("Decorators", "An updated description")
-
-    mock_state_manager.save_state.assert_called_once()
-    saved_state = mock_state_manager.save_state.call_args[0][0]
-    concept_key = normalize_key("Decorators")
-    assert saved_state.concepts[concept_key].definition == "An updated description"
+# --- 'define' tests have been REMOVED ---
 
 def test_add_mapping_no_state_file(mock_state_manager, capsys):
     """Test add_mapping when no state file is found."""
@@ -215,4 +267,4 @@ def test_show_status_no_concepts(mock_state_manager, empty_state, capsys):
     service.show_status()
 
     captured = capsys.readouterr()
-    assert "No concepts defined yet" in captured.out
+    assert "No concepts loaded yet" in captured.out

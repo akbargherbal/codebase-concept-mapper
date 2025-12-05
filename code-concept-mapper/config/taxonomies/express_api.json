@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "taxonomy_name": "Express.js API Concepts",
+  "concepts": [
+    {
+      "name": "Express Middleware",
+      "description": "Functions that have access to the request object (req), the response object (res), and the next middleware function.",
+      "keywords": ["app.use", "function(req, res, next)", "express.Router"],
+      "languages": ["javascript", "typescript"],
+      "category": "express"
+    },
+    {
+      "name": "Route Handlers",
+      "description": "Functions that are executed when a request is made to a specific route, such as app.get() or app.post().",
+      "keywords": ["app.get", "app.post", "app.put", "app.delete", "router.get"],
+      "languages": ["javascript", "typescript"],
+      "category": "express"
+    }
+  ]
+}

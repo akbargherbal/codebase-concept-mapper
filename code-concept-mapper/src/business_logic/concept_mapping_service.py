@@ -1,4 +1,6 @@
 import sys
+import json
+from pathlib import Path
 from datetime import datetime
 from typing import Optional
 
@@ -23,23 +25,67 @@ class ConceptMappingService:
         if self.state_manager.save_state(state):
             print(f"✅ Initialized concept map for '{project_name}'")
 
-    def define_concept(self, name: str, desc: str):
+    # --- define_concept method has been REMOVED ---
+
+    def load_concepts_from_file(self, concepts_file_path: str) -> bool:
+        """Load concept definitions from a JSON taxonomy file."""
+        concepts_file = Path(concepts_file_path)
+        if not concepts_file.exists():
+            print(f"❌ Concepts file not found: {concepts_file_path}", file=sys.stderr)
+            return False
+        
         state = self.state_manager.load_state()
         if not state:
             print("❌ No state file found. Run 'init' first.", file=sys.stderr)
-            return
+            return False
         
-        key = normalize_key(name)
+        try:
+            with open(concepts_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            if 'concepts' not in data or not isinstance(data['concepts'], list):
+                print("❌ Invalid taxonomy schema: missing or invalid 'concepts' list.", file=sys.stderr)
+                return False
+            
+            loaded_count = 0
+            skipped_count = 0
+            for concept_data in data['concepts']:
+                if 'name' not in concept_data or 'description' not in concept_data:
+                    print(f"⚠️  Skipping invalid concept entry (missing name/desc): {concept_data}", file=sys.stderr)
+                    continue
+                
+                key = normalize_key(concept_data['name'])
+                
+                if key not in state.concepts:
+                    new_concept = Concept(
+                        display_name=concept_data['name'],
+                        definition=concept_data['description'],
+                        keywords=concept_data.get('keywords', []),
+                        languages=concept_data.get('languages', []),
+                        category=concept_data.get('category')
+                    )
+                    state.concepts[key] = new_concept
+                    loaded_count += 1
+                else:
+                    skipped_count += 1
+            
+            if self.state_manager.save_state(state):
+                print(f"✅ Taxonomy loaded successfully.")
+                if loaded_count > 0:
+                    print(f"   - Added {loaded_count} new concepts.")
+                if skipped_count > 0:
+                    print(f"   - Skipped {skipped_count} duplicates.")
+                return True
+            else:
+                print("❌ Failed to save state after loading concepts.", file=sys.stderr)
+                return False
         
-        if key not in state.concepts:
-            state.concepts[key] = Concept(display_name=name, definition=desc)
-            print(f"✅ Defined new concept: {name}")
-        else:
-            state.concepts[key].definition = desc
-            print(f"✅ Updated definition for: {name}")
-
-        if self.state_manager.save_state(state):
-            print(f"   Definition set to: '{desc}'")
+        except json.JSONDecodeError as e:
+            print(f"❌ Invalid JSON in {concepts_file_path} at line {e.lineno}: {e.msg}", file=sys.stderr)
+            return False
+        except Exception as e:
+            print(f"❌ Failed to load concepts: {e}", file=sys.stderr)
+            return False
 
     def add_mapping(self, concept_name: str, file_path: str, identifier: Optional[str], 
                     lines: Optional[str], confidence: str, pattern_type: str, evidence: str):
@@ -50,7 +96,7 @@ class ConceptMappingService:
 
         key = normalize_key(concept_name)
         if key not in state.concepts:
-            print(f"❌ Concept '{concept_name}' not found. Define it first with 'define' command.", file=sys.stderr)
+            print(f"❌ Concept '{concept_name}' not found. Load it first with the 'load-concepts' command.", file=sys.stderr)
             return
 
         final_start, final_end = self._determine_lines(file_path, identifier, lines)
@@ -81,7 +127,7 @@ class ConceptMappingService:
 
     def _determine_lines(self, file_path, identifier, lines):
         if identifier:
-            print(f"🔍 Scanning {file_path} for identifier '{identifier}'...")
+            print(f"🔎 Scanning {file_path} for identifier '{identifier}'...")
             start, end = find_lines_by_identifier(file_path, identifier)
             if start and end:
                 print(f"   ✓ Found at lines {start}-{end}")
@@ -112,7 +158,7 @@ class ConceptMappingService:
         print(f"   Last Updated: {state.metadata.last_updated}")
         print("-" * 40)
         if not state.concepts:
-            print("   No concepts defined yet. Use 'define' to add one.")
+            print("   No concepts loaded yet. Use 'load-concepts' to add a taxonomy.")
         else:
             for data in sorted(state.concepts.values(), key=lambda c: c.display_name):
                 count = len(data.implementations)

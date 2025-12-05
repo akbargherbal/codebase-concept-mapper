@@ -18,6 +18,11 @@ class Concept:
     display_name: str
     definition: str
     implementations: List[Implementation] = field(default_factory=list)
+    # --- NEW FIELDS START ---
+    keywords: List[str] = field(default_factory=list)
+    languages: List[str] = field(default_factory=list)
+    category: Optional[str] = None
+    # --- NEW FIELDS END ---
 
 @dataclass
 class Metadata:

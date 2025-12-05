@@ -36,6 +36,11 @@ class StateManager:
                 key: {
                     "display_name": concept.display_name,
                     "definition": concept.definition,
+                    # --- NEW SERIALIZATION LOGIC ---
+                    "keywords": concept.keywords,
+                    "languages": concept.languages,
+                    "category": concept.category,
+                    # --- END ---
                     "implementations": [impl.__dict__ for impl in concept.implementations],
                 }
                 for key, concept in concept_map.concepts.items()
@@ -49,9 +54,14 @@ class StateManager:
             key: Concept(
                 display_name=concept_data["display_name"],
                 definition=concept_data.get("definition", ""),
+                # --- NEW DESERIALIZATION LOGIC (with .get for safety) ---
+                keywords=concept_data.get("keywords", []),
+                languages=concept_data.get("languages", []),
+                category=concept_data.get("category", None),
+                # --- END ---
                 implementations=[
                     Implementation(**impl_data)
-                    for impl_data in concept_data["implementations"]
+                    for impl_data in concept_data.get("implementations", [])
                 ],
             )
             for key, concept_data in data["concepts"].items()

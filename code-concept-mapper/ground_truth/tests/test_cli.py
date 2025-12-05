@@ -31,24 +31,30 @@ def test_cli_init_command(tmp_path, monkeypatch):
 
 def test_cli_full_workflow(tmp_path, monkeypatch, capsys):
     """
-    Tests a full init -> define -> add -> status workflow.
+    Tests a full init -> load-concepts -> status workflow.
     """
     state_file = tmp_path / "ground_truth" / "data" / "concepts_map.json"
     state_file.parent.mkdir(parents=True)
     
+    # Create a dummy concepts file for the test
+    concepts_file = tmp_path / "concepts.json"
+    concepts_file.write_text(json.dumps({
+        "concepts": [{"name": "Decorators", "description": "Functions that wrap others"}]
+    }))
+
     # 1. Run INIT
     monkeypatch.setattr(sys, 'argv', ['concept_mapper', 'init', 'workflow-project'])
     with patch('ground_truth.tools.concept_mapper.project_root', str(tmp_path)):
         cli_main()
     
-    # 2. Run DEFINE
+    # 2. Run LOAD-CONCEPTS (replaces 'define')
     monkeypatch.setattr(sys, 'argv', [
-        'concept_mapper', 'define', 'Decorators', '--desc', 'Functions that wrap other functions'
+        'concept_mapper', 'load-concepts', str(concepts_file)
     ])
     with patch('ground_truth.tools.concept_mapper.project_root', str(tmp_path)):
         cli_main()
 
-    # Verify the define command worked by reading the file
+    # Verify the load command worked by reading the file
     with open(state_file, "r") as f:
         data = json.load(f)
     assert 'decorators' in data['concepts']
@@ -67,7 +73,6 @@ def test_cli_full_workflow(tmp_path, monkeypatch, capsys):
 
 
 # Add this function to the existing test_cli.py file
-
 def test_cli_add_command(tmp_path, monkeypatch):
     """Tests the 'add' command end-to-end."""
     state_file = tmp_path / "ground_truth" / "data" / "concepts_map.json"
@@ -76,13 +81,19 @@ def test_cli_add_command(tmp_path, monkeypatch):
     # Create a dummy source file for the tool to parse
     source_file = tmp_path / "source.py"
     source_file.write_text("class MyDecorator:\n    pass\n")
+    
+    # Create a dummy concepts file
+    concepts_file = tmp_path / "concepts.json"
+    concepts_file.write_text(json.dumps({
+        "concepts": [{"name": "Decorators", "description": "..."}]
+    }))
 
-    # Setup: Run init and define first
+    # Setup: Run init and load-concepts first
     monkeypatch.setattr(sys, 'argv', ['concept_mapper', 'init', 'add-test'])
     with patch('ground_truth.tools.concept_mapper.project_root', str(tmp_path)):
         cli_main()
     
-    monkeypatch.setattr(sys, 'argv', ['concept_mapper', 'define', 'Decorators', '--desc', '...'])
+    monkeypatch.setattr(sys, 'argv', ['concept_mapper', 'load-concepts', str(concepts_file)])
     with patch('ground_truth.tools.concept_mapper.project_root', str(tmp_path)):
         cli_main()
 
@@ -106,4 +117,4 @@ def test_cli_add_command(tmp_path, monkeypatch):
     assert implementations[0]['identifier'] == 'MyDecorator'
     assert implementations[0]['line_start'] == 1
     assert implementations[0]['line_end'] == 2
-    assert "class MyDecorator" in implementations[0]['code_snippet']    
+    assert "class MyDecorator" in implementations[0]['code_snippet']
