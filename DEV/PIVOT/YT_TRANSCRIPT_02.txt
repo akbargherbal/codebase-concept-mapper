@@ -1,0 +1,294 @@
+In this video
+Chapters
+Transcript
+Search in video
+Intro
+Google just made one of the hardest
+problems in AI ridiculously easy. Like
+easier than finding sand on a beach.
+Traditionally, rag is a process which
+has caused engineers load of headaches,
+costs a fair amount to operate and
+requires a lot of maintenance. But
+Google just collapsed it down to three
+simple API calls with their new Gemini
+file search tool. In fact, I can build
+Demo
+an entire rag tool just like this in
+less than a minute with a single prompt
+in English. no code at all. So today I'm
+going to show you how absurdly easy it
+is to implement this and how you can
+build it yourself. I'm going to go
+through the three breakthrough factors
+which make this new tool so disruptive.
+And of course I'm going to talk about
+the realworld impact that this has on
+The Problem
+millions of businesses. Now before we
+dive into why this is so revolutionary,
+let me paint you a picture of what AI
+developers have previously been dealing
+with when it comes to rag. So let's say
+that you want an AI chat with your
+company's documents. Cool. Well, get
+ready to set up chunking strategies to
+generate embeddings with separate models
+and find out which one's the best model
+for your use case. Get ready to pay for
+and manage vector databases like Pine
+Cone or Weev8 and then to build
+retrieval systems to implement ranking
+algorithms and at the end of it debug
+while your LLM is still hallucinating.
+I've done this for a load of clients and
+basically it's a bit of an
+infrastructure nightmare. But Google
+just deleted all of that. So let's talk
+about the fundamental problem here, the
+LLM blind spot. Now look, GPT5, Claw,
+Gemini, all of these models are
+incredibly powerful. They can write
+code. They can analyze complex problems.
+They can have philosophical debates, but
+they have one massive limitation. They
+know nothing about your data. Your
+private documents, nope. Your company's
+internal knowledge base, nope. Your
+project notes from the last quarter,
+nope. And this is where RAG comes in.
+retrieval augmented generation. It's
+been the solution for grounding LLMs in
+your private data. You retrieve relevant
+information from your document and then
+you augment the LLM's prompt with that
+context. But here's the thing,
+implementing RAG has been a bit of a
+pain to implement until now. Let me show
+you what building rag from scratch
+looked like. So, first you got the
+document processing. You need to chunk
+down your documents intelligently. If
+the chunks are too small, then you lose
+context. If they're too large, you hit
+token limits. And we're not even going
+to talk about chunk overlap. All of this
+alone is a complete art form. Then
+you've got the embeddings and generating
+your embeddings. Now you're calling
+embedding models and converting your
+text or your chunks into highdimensional
+vectors. Then managing these API costs
+and balancing between the models which
+have high performance but higher costs
+and then seeing which providers work the
+best for you. Then once you've done
+that, you come on to your vector
+database. Congratulations. Now that
+you've got all these vectors, you need
+to store them somewhere. And for that
+you need to pay for something like Pine
+Cone or WV8 or Quadrant to store these
+vectors. And this obviously means
+monthly fees and scaling issues and
+connection management and diving into
+the logs when something goes wrong, the
+whole nine yards. And once you've done
+that, you've then got your search
+algorithms to worry about, your
+similarity scoring, your hybrid search
+strategies as well. Not to mention your
+re-ranking because the first retrieval
+isn't usually good enough. You need to
+rerank models. And we haven't even
+talked about the actual LLM call yet,
+and that's just to get the content. As
+The Innovation
+you can see, companies can spend weeks
+or even months and a ton of money
+actually figuring this out of how to
+build this system for themselves and how
+to make it actually work properly. But
+enter the gamecher. This is where
+Google's groundbreaking new tool, the
+Gemini search tool, comes in. You can
+implement this entire process in just
+three lines of code. your semantic
+chunking, the generation of your
+embeddings, the vector indexing, then
+your intelligent retrieval. All of that
+is now super easy. But it gets even
+How To Use It
+easier when we pair it with Google's
+vibe coding tool in AI Studio. I'm going
+to go over to AI Studio, which is
+completely free to use if you've got a
+Google account. And with this prompt
+here, I'm going to create a very simple
+app that allows us to chat with any
+document that we upload. I'm going to
+send this prompt off and give it 30
+seconds to a minute to generate. Now,
+since our VIP coding tool and the file
+search tool are both from Google, we
+don't even have to mess around with
+setting up API calls or even API tokens.
+It's all handled automatically for us.
+And here is the result. I could upload
+any file. This one here is a technical
+specification for a chip. And it's going
+to automatically chunk it down, create
+the embeddings, index the vectors, and
+then allow you to ask any question and
+retrieve that information flawlessly.
+And that's it. That is the entire
+implementation. Pretty crazy, right? So
+The Three Reasons
+this is not just convenient, it is truly
+disruptive. And there are three main
+reasons which make it so disruptive. The
+first one is speed. What used to take
+maybe days, more like weeks or possibly
+months now takes, as you've seen,
+minutes. And I'm not exaggerating. You
+can go from zero to a working rag
+application in literally the time it
+takes to grab a coffee or even less. For
+startups or side projects or enterprise
+proof of concepts, this is a massive
+accelerator. The barrier to entry has
+just dropped below zero. basically.
+Which brings us on to point number two,
+which is the cost. And this is where it
+gets really interesting. The document
+storage free, the embedding generation
+free. You only pay a tiny onetime
+indexing fee per file, and then the
+standard Gemini API rates for the actual
+generation. When you compare this to
+paying monthly for Pineone or Weeva,
+paying per embedding cool, managing
+infrastructure, Google is essentially
+giving away the hardest part for free.
+Now, this isn't just cheaper, it's
+orders of magnitude cheaper. We're
+talking about potentially thousands of
+dollars per month in savings for
+production applications. And point
+number three, which is the real kicker,
+you still get enterprisegrade features.
+You get support for dozens of file types
+straight out of the box. PDF, Word
+documents, spreadsheets, presentations,
+whatever you want. There's automatic
+handling of different document
+structures. There's semantic
+understanding built in. You're not
+sacrificing capability for simplicity
+here. You are getting both. Okay, cool.
+But what does this actually mean for
+Real World Impact
+you? Well, if you're a startup founder,
+you can now build document-based AI
+features into your products in days, not
+months. That's a massive competitive
+advantage and a huge cost savings. If
+you're a enterprise developer, then you
+can prototype AI solutions with company
+data without waiting for infrastructure
+teams or without depending upon anyone
+else to build these. It's now so much
+quicker to create these uh enterprise
+level solutions. If you're a solreneur
+or an indie hacker, then features which
+are previously only accessible to
+wellunded companies are now available to
+you absolutely for free and so much
+quicker and easier than before. And the
+use cases just go on and on and on here.
+In fact, about a year ago, I was working
+with a company that used Rag to build an
+AI system that would recommend the best
+mortgage product to a customer based on
+all of their specific information. Now,
+this took me a while to implement and
+therefore I charged a fair amount for
+it. But now that client could do this
+for themselves within minutes, which is
+less good for developers, but great for
+the world as a whole. And this new tool
+by Google is really great, but it's only
+useful if you actually know about it.
+Not knowing about the right tools can
+cost you thousands of dollars in today's
+AI world, which is why I have put
+together a complete list of the most
+useful AI tools out there at the moment.
+Plus, I'm adding to this every single
+day, so you're never left behind. If you
+want to have access to this, I'll leave
+a link down below where you can go and
+The Technicals
+access it. Anyway, so let's get a little
+bit more technical here. For the
+engineers watching, let's talk about
+what's actually happening. The file
+search system has a two-phase approach.
+First, you've got your offline indexing
+phase. When you upload a file, Gemini
+analyzes your document structure and
+creates semantic chunks with uh custom
+overlap strategies. It then generates
+the embeddings based upon Google's
+latest models and then stores them in an
+optimized retrieval system. Then the
+second part of the two-phase system is
+the real-time query phase. Your query
+gets embedded. The similarity search
+runs across all your stored vectors.
+There's top K retrieval with potential
+re-ranking. Then the resulting relevant
+chunks get injected back into Gemini's
+context window and you've got your
+answer. And the beautiful part is we
+don't have to touch any of this. It's
+all abstracted away, but you get all the
+benefits from Google's massive R&D
+investment into making each one of these
+steps state-of-the-art. Okay, but let's
+be fair about this. This isn't the only
+managed rag solution out there. Open AAI
+has assistance API with file search.
+Anthropic has well they're working on
+it. Langchain and Llama Index also
+provide frameworks. But Google's pricing
+and integration with Gemini specifically
+makes this a really compelling and
+unique offer. The combination of cost,
+simplicity, and the power of Gemini
+models creates it something really
+special here and something that I'm
+going to be using an awful lot going
+forward. Essentially, Google is saying,
+"We're not just giving you a language
+model. We're giving you a complete
+solution for realworld AI rag
+applications. Now, is this perfect? No,
+of course it's not perfect. You're
+locked into Google's ecosystem. If you
+need custom chunking strategies for
+highly specialized use cases, you're
+pretty limited. And if you really want
+maximum control over everything, you
+might still want to build your own rag
+solution from scratch. But for 90% of
+the cases out there, this is more than
+enough. And 90% represents millions of
+potential applications that are now
+suddenly viable and very easy to
+implement. So, here's the bottom line.
+Google have just made it incredibly easy
+and cost-effective to implement
+world-class rag features into any
+application that you want. That's it
+from me. I'll see you in the next one.

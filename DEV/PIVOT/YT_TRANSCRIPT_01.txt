@@ -1,0 +1,442 @@
+Intro
+Okay, so while everyone is waiting for Gemini 3.0 to come out, the Gemini API
+team introduced a really cool new feature this week, and this is basically a sort
+of automated or built in RAG system that you can use with the Gemini API.
+Introducing the File Search Tool in Gemini API
+So it's actually called the file search tool.
+And what it actually does is it allows you to basically upload a whole
+variety of different documents, whether they're PDFs, whether they're code,
+whether they're text markdown files, even things like logs and JSON files.
+And then what it will do is it will provision a file store for them and
+actually process them and chunk them and do the embeddings for you, and then
+give you a system that you can basically just call Gemini And use this vector
+store and RAG database as grounding for use with the actual Gemini APIs.
+so if we come in here and look at how this actually works, and they're
+actually calling it file search, I'm not sure why they're not just calling
+it something like Gemini RAG, but fundamentally this really is just a
+streamlined, entire RAG process here.
+So what happens is you upload some files, and you upload them in a way that they're
+gonna become part of a file store.
+Once those files are up there, they're then going to be split and
+chunked, and then each chunk is going to have an embedding made for
+it using the Gemini embedding model.
+and then at query time, you basically just call the Gemini API passing in
+this file search tool and in the backend it will handle, embedding your query,
+doing the vector store lookup, getting the relevant information, putting it
+into a natural language response, And even giving you a set of citations
+that you can return to the user to actually use in your UI, et cetera.
+so they've actually made a demo app of this, using the Gemini build,
+Gemini Build Demo
+sort of vibe coding tool in here.
+And you can come in here and see that, okay, you basically
+click to upload something or we can use one of the examples.
+In this case, I'm gonna use the example here because after this I'm gonna go
+through both a simple version with code and then a more advanced version with
+code to show you some of the details of what's actually going on under the hood.
+But you can see that if we come in here, we upload this, it's going to
+go through the process of generating a set of embeddings, putting them
+together in this file store so that we can do vector lookups when we run our
+query, and it gets embedded as well.
+Okay.
+And then when it's finished processing, you can see now we've got this doc here.
+it will even suggest some questions that we can ask it.
+And I can just click on some of those suggestions.
+We'll actually look at the code for this in a second.
+and you can see that it will go through It is not loading that full
+document into the context window.
+It's just loaded our query and then it will go off and get, a certain
+number of responses back from the chunks, and then put them together.
+And you can see it's gone through and it's actually, given us an answer in here.
+And then on top of that, for each of these, we can see we've actually
+got the, source chunks, in here.
+So if we wanted to, we'd probably need to, write some extra code
+for highlighting, things in here specifically, or, those sorts of things.
+But we can see that this is what the raw system is actually getting
+out and using as the five sources for creating the answer in here.
+Now I don't even actually know what the Hyundai i10 is.
+so let's ask it what it is.
+So we can see from this what it is.
+It's been able to go and find out those, things about the car, and
+we can come in here and we can see, the actual sources, here.
+If you wanna look at the code of how they've done this.
+it's quite nice because we can come in here and actually look at this code.
+We don't really care about the icons.
+What we do care about is in the services coming down here and
+seeing the actual Gemini calls.
+So we can see, obviously in this case, it's basically a TypeScript file.
+if we want to see, what actually is in here, it's gonna take our query
+and it's going to append to that.
+Do not ask the user to read the manual.
+It's, a bit embarrassing if you have your RAG system, that is all about a
+manual for something telling you to go and find the answer in the manual.
+it's basically saying pinpoint the relevant, sections.
+So that's being appended to the actual, prompt that's going in there.
+And then we can see if we wanted to know how they're generating
+the actual sample questions.
+The prompt for that is in here as well.
+So it's using, Gemini Flash for both of these.
+Often people are using Gemini Flash lite for these kind of
+suggested prompt things in here.
+But we can see here for the suggested prompt we're getting You are
+provided some user manuals for some products figure out what product each
+manual is based on the cover page.
+Do not guess or hallucinate the product.
+Then for each product generate four short and practical questions
+a user might ask in English,
+and then we can see that it's actually telling it, return those
+questions as a JSON array of objects.
+And it's got some examples of how the actual, JSON should be,
+and you can see in here for both queries, the actual RAG store
+name, is being provided in here.
+and so that's got the chunks right, that have been embedded,
+et cetera, for going through this.
+So at the simplest level, we can see that there's not a lot to this.
+It really is just you upload the files, it will take care of
+the embeddings at the backend.
+it will take care of the vector store at the backend.
+and then we just call, Gemini and basically pass this in
+as a tool for Gemini to use.
+So I think the best thing is let's jump in and have a look at a code example, and see
+both sort of the simplest example of what it can do, but then also look at maybe
+how we could combine it with some other things to make a more advanced example.
+All right, let's jump in.
+Indexing Process
+Okay, so before we jump into the code, let's just take a look at
+actually what's going on here.
+So, the high level process of where we're indexing.
+We're basically uploading our documents, to file storage.
+once that is done, they will go through, an embedding model.
+So there'll be chunked down into chunks.
+we can actually set that.
+I'll show you that in the advance code walkthrough.
+But then once we've done this, they'll be put into a vector store,
+And then we can actually use it.
+So at query time, what happens is the user will just call the Gemini API,
+or our app will call the Gemini API.
+it will then decide does it need, the grounded knowledge to answer
+the question or not, right?
+If not, it will just use normal Gemini to answer.
+If the answer is yes, it will then come over to the actual sort of RAG part.
+and it will generate some queries, right?
+It could be one, it could be multiple.
+Then for each of these queries will be embedded.
+It will then be passed to the database or the vector store where it will get
+the most relevant chunks bring them back.
+If there are multiple queries, this could actually go through a number of different
+times for doing a multi hop answer.
+It'll actually go through and do multiple queries here.
+It then brings them all back to Gemini, and then combines this with our original
+query to create the final answer and generates the final answer that way.
+Let's jump into the code and have a look at actually how it's done in code.
+Simple Demo of File Search Tool in Gemini API
+Okay, so you need to make sure that you've got a recent version
+of the Gen AI, SDK installed.
+You wanna make sure you've got a Google AI studio key, in here.
+And in this case, I'm basically just bringing in, A PDF file.
+So the actual thing I'm bringing in is from the court documents.
+This came out this week where, it's actually a deposition
+I think, of Ilya Sutskever.
+And he talked about what led up to, them sort of firing Sam Altman
+for a few days, and why he made the decisions he did, et cetera.
+I think this is part of the ongoing lawsuit between Elon
+Musk and, OpenAI or Sam Altman.
+and my thinking here was rather than just take everyone else's
+interpretation of this, I wanna look at it myself, but it's quite long.
+I'm just gonna ask particular questions and then see what the answers are back,
+and then have a look at perhaps some of the grounding documents or the citations.
+So once we've got that document, the first thing I'm gonna
+do, is make a Gen AI client.
+and then I'm gonna set up this file search store.
+And so this is basically our vector store in here, so we can give it a display name.
+In this case, I'm just calling it Sam Basic.
+and you can see that once that's created, we've got a timestamp, we've got the
+display name, we've got the actual sort of underlying name that it gets
+referred to, in the file search stores.
+And then we've got the last update in there.
+One of the things that's really important is you want to be able
+to see all your file search stores.
+So while the original documents that you upload get deleted after
+48 hours, the file search stores stay there until you delete them.
+So you wanna make sure that you can, at any point have a look at
+all the file search stores that are actually on your, account.
+Now, in this is, I'm listing it out.
+It's basically only one.
+I will show you later on actually how you at the end can delete
+it so that you're not gonna be paying for having that up there.
+And speaking of the pricing and the rate limits, et cetera, you can see that,
+maximum file size per document is a 100 mb. if you've got a free tier, you
+can get, one GB of file search stores.
+if you've got, tier one, et cetera, goes up to 10 x that, then 10 x
+that again, then 10 x that again.
+And pricing for this is pretty reasonable.
+We are just paying for the embedding calls for when we actually upload it, at
+the normal price for Gemini embeddings.
+the storage, IE the vector storage there seems to be free, for now.
+I don't know if that's gonna change in the future.
+And then the actual embeddings for query time are also free.
+And then finally, you're just charged for the normal tokens, just like you
+would be with any other Gemini API call.
+All right, so once you've got your file search store set up, you
+want to actually upload something.
+So here you can see I'm uploading this document in there.
+I'm giving a display name of Ilya testimony 01.
+I pass this in, I pass in the actual file search store
+name, which you can see.
+This is it here.
+for where we're gonna upload this.
+And I'll show you later on in the advanced one uploading multiple documents.
+But here we can kick this off.
+and we've got this operation of really where it's more than just uploading
+this is uploading and importing it, in there and sort of processing it
+where it's gonna be chunking, it's gonna be doing embeddings, et cetera.
+So we actually get this operation back and we can see, what's going on, and
+at any point we can see if it's done.
+So one of the things you want to, perhaps do if you're gonna make a UI for this is
+you want to have sort of something where you're checking if it's done, and then
+show you know, that perhaps it's not done.
+In this case print waiting.
+And if it is done, just print done.
+So in this case it uploaded pretty quickly and it's done now.
+And at this point we are done with the ingesting and the setting
+up of the actual vector store, embeddings, all those sorts of things.
+So now we can just call it.
+And you can see that here, i'm just gonna start off by saying,
+tell me about this document.
+Now I've added some stuff to the prompt, just like I showed you in the
+other one of where we basically, I want it to be returned in markdown.
+I want it as sections and bullet points.
+so I'm just adding that to whatever the sort of user prompt is going in there.
+it's really important in here that we basically have our tools.
+So we've got a list of tools and this one that we are passing in is type tool.
+it's the file search types, file search.
+And we are passing in the actual name, of that.
+Now remember that's not the display name, that's the sort of long name in there.
+You can see when I mouse over it here that you can actually see, that
+it's samba hyphen LUH, et cetera.
+we will then get a response back.
+We can just print out the response text.
+You can see, sure enough, it's given me this back as, metadata in here.
+it's obviously got some things, from the sort of front of the document
+about who's, speaking in it the date of the deposition, the case where
+we've got Elon Musk, versus Sam Altman.
+we've got the confidential is marked highly confidential.
+As far as I know, from what I'm seeing online, it's actually
+been released in court documents so anyone can just download it.
+That's how I got the PDF.
+and then we can see sort of brief, summary or brief what's going on.
+so this is all about a memo that Ilya Sutskever created about Sam Altman, and
+it's got a lot of things that in that.
+And then it's also got, other people's comments, other people's reactions.
+Now how do we know that this is, true, right?
+we can come in here and look at this metadata.
+So as part of the response for each candidate we get back,
+we get this grounding metadata that it's been grounded on.
+and in this case, if we scroll through, it's got lots of parts of
+the doc in there, but we've also got like these grounding chunks.
+so we can see bits where it's given us an answer back.
+Where, what chunks do they refer to, going through here.
+So just to show you this, we can actually go through and just look at
+the dictionary keys in there and we can see that the grounding metadata,
+it's not just for the file search tool, it's for Google Maps stuff.
+It's for different things with web search, with, a bunch of different things.
+What we're interested in is these grounding chunks
+and the grounding supports.
+And so you can see if we come along here and we look at this fourth,
+grounding support and grounding chunks, we can see that, okay, we've
+got this grounding support here.
+so this has basically got the segment, you know where it's coming from, and we
+can see with looking at that grounding chunk, the corresponding grounding chunk
+where the answer actually comes from.
+So we've got the raw text in here.
+this text has lines like this.
+So we can see, if we look in here, this is actually how the document is.
+It's not a neatly formatted document or anything like that.
+we can see, what's actually going on, in there.
+And then we come back to our thing, we can see that.
+Okay, we've got all the grounding and stuff like that in there.
+Now if we wanna run another, chunk, what did Ilya see?
+I will let you go through and run this one yourself, and you can look at the
+answer that comes back and if you want to go through the grounding and stuff.
+So finally, if we want to delete this and basically just get rid
+of the store, I've basically put together a little script here will
+delete all the stores on your key.
+you can either get the store by the name, this is one of the things that you
+can, do and then just, delete that one.
+Or in this case, it just loops through and deletes all the stores in here.
+so next up, let's look at a more advanced example where we can perhaps combine
+a few things from documents, and some other things going on here as well.
+All right, so in this one it's a little bit more advanced.
+Advanced Demo of File Search Tool in Gemini API
+We're just gonna add in a few different features that we didn't have.
+mostly things around custom chunking, adding some metadata,
+multiple files, that kind of thing.
+So we start off just the same.
+the thing I've done here is I've brought in
+a set of transcripts of my last, eight videos, in here.
+And you can see that they're quite varied, topics.
+So that was sort of like the goal here.
+I'm gonna make a new vector store this time, so it's gonna be called the
+Sam YouTube Transcripts Vector Store.
+We can see when we look at this, sure enough, it's been
+made fine and stuff like that.
+And we can just list out to see what's there.
+All right.
+Now the next step is we wanna set up our, chunking for uploading.
+chunking is basically just passed in as a config, We don't have a huge
+amount of options at the moment.
+This might change in the future, but we can go in here and set, the
+maximum tokens per chunk, to be 250.
+We can have overlap tokens, to be 50 in this case.
+And then we're gonna basically just pass in when we do the uploading.
+All right, so if we're doing the multiple files, I'm just gonna glob
+the folder of transcripts and you can see we've just got a path of where
+each of these is a markdown file.
+Now what we want in there is if we look at one of those markdown files,
+we'll see that it's basically got, a transcript where the title is the
+first line, the URL is the second line.
+and then the rest has got some timestamps in it, and it's got
+the transcript as we go along.
+you can see here, I'm just making a really simple function to
+extract out that title and URL.
+So this will basically just get it where, we can pass something in.
+It's gonna return back the title and the URL, which we are gonna use for metadata.
+Now, we could even, add things like, the date, you know, there's lots of
+metadata that we could apply to this.
+We could actually have another function where we actually pass in the whole
+sort of article to the Gemini Flash Lite model and ask it to create the metadata.
+So that's a good, thing that I've done in the past is where you can use
+those really small fast models and ask it to give me a set of 10 keywords,
+to give me, a variety of different information that you want out of it.
+And even to do things like, to classify it that, is this video about a new
+model, a new product, a technique, a tutorial, that kind of thing.
+And that can work really well at being able to get it so you get a whole bunch
+of sort of custom metadata that you can then pass in for doing searches later on.
+For example, if I wanted to search all the videos that were just tutorials
+or all the videos that were just about OCR models, that kind of thing.
+And just to test that it's working.
+We're gonna pass back our title, our URL, and our file name.
+And sure enough, it's working.
+If we just go through that list, and print them out, we can see
+we're getting the data in there.
+All right.
+Next up, we want to create our upload Function.
+So here I'm gonna basically just pass in the file path.
+from that we'll extract out the title of the URL.
+we will get the file name and then we'll pass these in and you can
+see that, Okay, we're gonna have the display name be the title name.
+We are gonna have the chunking config be what we defined earlier
+on for the chunking config.
+And then we're gonna have our custom data is just gonna, for now, basically
+use the title, the URL, the file name.
+Like I said before, you could actually have, a whole bunch of sort of keywords
+and other things, in there as your metadata Going through each time,
+it's gonna basically check is the upload done?
+When it's done, it's going to print out that it's uploaded and indexed.
+All right.
+We now run that, and we can see sure enough, it goes through and it
+uploads, each of our docs up there.
+Now, if you wanted to, you can actually upload things to the files API.
+So this is a different API this is not straight to the vector store.
+at this point we can actually then import them in.
+So we could do something very similar to this except for, rather than upload
+to file search store, it would just be import, them into the file, store.
+And that's if you've got files already uploaded there.
+All right.
+In this case, we then wanna try it out and see how it goes.
+So you can see here we are basically saying, right, what is the name
+of the browser OpenAI launched you can see I'm passing in the prompt.
+I'm also passing in some instructions in there just to return in markdown.
+Be concise.
+one of the things that I could actually do here, and you can play around with this,
+is that, I could actually get it to return
+the timestamp that's closest.
+'cause you'll see that when it goes through, sure enough, it gets
+the answer right pretty easily.
+So just going through those documents, it can find out, that the
+Atlas is the name of the browser.
+and if we look at the grounding data that it's actually grounding on, you'll
+see that it's found the right video transcript, that's not a problem.
+It's got the URL in there.
+it's got this transcript, the sort of timestamps in here.
+So we could actually, get something where return back the, timestamp and
+we could actually ask it to do that in JSON or in something, like that.
+and then we could actually convert that to a time, for the number of seconds.
+and then pass that in a link so that when somebody clicked it, it would
+actually take it to the spot in the video where this was talked about.
+so that's something that we could, look at doing as well.
+if we wanna see all the actual citations, you can see that.
+Okay, just going through, we've got these different, citations,
+where it's being talked about.
+and just like before, I'm just showing you that, okay, you do
+get a bunch of things in here.
+You get this grounding chunks and grounding support.
+unfortunately the queries, stuff like that, this is
+seems to be for Google search.
+It's not for, doing this.
+So it would be nice if they actually returned what were the queries
+that they ran and stuff like that, and how many of them were there?
+but you can see that if we look at the grounding chunks and
+grounding supports, we get a much more in depth of what we were just
+looking at before, going through.
+All right, Next up, just to show you this, we can, also do things like
+where we, ask it for multiple, videos.
+So, okay, two of the eight, one was about Claude skills, one was about Haiku.
+sure enough, if I ask it, what videos does that make about Claude?
+Please give URLs.
+it's coming back, giving the correct URLs, giving the names of the videos, and then
+a little bit about them, going through here.
+what about if we wanted to actually use metadata to do the search?
+So you can see here where I'm basically saying, what does
+Sam talk about in this video?
+Now, this video could mean any of those eight videos.
+Now, if we didn't provide any metadata in there, it would, be confused and it
+would just tell us, I don't know what video you're talking about, but if we
+pass in, the meta filter of title equals and then we've put this title in there.
+Now it can actually,
+work out that, oh, okay, this is the video that you're talking
+about, and it filters it out.
+Another good example of that is what if we wanted to do a search just on A URL?
+So you can see that the URL here was for the Claude skills.
+So I just copied that down.
+And now we've got the same thing.
+What does Sam talk about in this video?
+But now we've got the metadata being the filter of the URL, passing in there.
+And sure enough we get, the stuff about Claude skills.
+We get a breakdown of that.
+remember you could play around with these, in this ones, you can see that I haven't
+put the extra, instructions in there.
+but this is something that you can do just like you would do with any
+of your calls to the Gemini API.
+So just showing you that we've basically now got multiple documents,
+we've got metadata, we can filter, responses back based on that metadata.
+And we could really expand this now by putting in, a few hundred different,
+text files in there and it would be able to go through and we could put
+in things like data as a metafilter and stuff like that in there.
+Alright, so just to finish up, if you want to list the docs that are
+in the Vector store to actually see what's in there, we can do that so
+that we can see what's in there.
+And then finally, if we want to actually delete it all.
+We can just delete our store.
+and we've basically taken everything out.
+So hopefully this video is showing you that you can use this file search tool in
+the Gemini API to build very quick, RAG solutions that you can try things out.
+Now, they're not gonna be the fanciest RAG solutions obviously.
+if you wanted to do, lots of different things, you still need to basically
+build it perhaps from scratch.
+But if you want to get something up really quickly where you can
+have users just dump in a bunch of documents themselves and then be able
+to query them, this is something, that you can get going really quickly
+and you can get really good results.
+Anyway, let me know in the comments if you're interested in more stuff about RAG.
+I haven't done rag stuff for ages.
+I've just been returning to it recently for, some work stuff.
+And it really is one of the killer applications of using LLMs today,
+especially things like Agentic RAG.
+And you could imagine using this to have an agent spin up its own
+RAG as it goes out and searches and finds documents on the internet.
+It can just upload these and make its own RAG, which it can then use to
+do questioning, by itself later on.
+anyway, as always, let me know in the comments what you think.
+if you found the video useful, please click like and subscribe, and I
+will talk to you in the next video.
+Bye for now.
